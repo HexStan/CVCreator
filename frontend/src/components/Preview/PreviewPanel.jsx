@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
 import { getTemplate } from '../../templates/registry.js';
+import { splitByPageBreak } from '../../utils/pdfHtml.js';
 import './PreviewPanel.css';
 
 const PAPER_SIZES = {
@@ -154,30 +155,7 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
 }
 
 function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, innerWidth, fontFamily }) {
-  const pages = useMemo(() => {
-    const headingRegex = /^(#{1}\s+[^\n]*)/gm;
-    const splits = [];
-    let lastIndex = 0;
-    let match;
-    while ((match = headingRegex.exec(markdown)) !== null) {
-      splits.push({ start: lastIndex, end: match.index });
-      lastIndex = match.index;
-    }
-    splits.push({ start: lastIndex, end: markdown.length });
-
-    const result = [];
-    for (const split of splits) {
-      const part = markdown.slice(split.start, split.end).trim();
-      if (part || result.length === 0) {
-        result.push(part);
-      }
-    }
-    return result;
-  }, [markdown]);
-
-  if (pages.length === 0) {
-    pages.push('');
-  }
+  const pages = useMemo(() => splitByPageBreak(markdown), [markdown]);
 
   const headerMarkdown = pages[0];
   const bodyPages = pages.length > 1 ? pages.slice(1) : [];

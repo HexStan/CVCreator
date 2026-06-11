@@ -10,17 +10,10 @@ function renderMarkdown(markdown) {
   return DOMPurify.sanitize(raw, { ADD_ATTR: ['target'] });
 }
 
-function splitByH1(markdown) {
-  const headingRegex = /^(#{1}\s+[^\n]*)/gm;
-  const splits = [];
-  let lastIndex = 0;
-  let match;
-  while ((match = headingRegex.exec(markdown)) !== null) {
-    splits.push({ start: lastIndex, end: match.index });
-    lastIndex = match.index;
-  }
-  splits.push({ start: lastIndex, end: markdown.length });
-  return splits.map((s) => markdown.slice(s.start, s.end).trim()).filter(Boolean);
+export function splitByPageBreak(markdown) {
+  if (!markdown) return [''];
+  const sections = markdown.split(/<!--\s*pagebreak\s*-->/g);
+  return sections.map((s) => s.trim()).filter((s, i) => s || i === 0);
 }
 
 function buildTemplateHTML(basicInfo, markdown, templateKey) {
@@ -32,7 +25,7 @@ function buildTemplateHTML(basicInfo, markdown, templateKey) {
 
   let html = '';
 
-  const sections = splitByH1(markdown);
+  const sections = splitByPageBreak(markdown);
   if (sections.length === 0) sections.push('');
 
   sections.forEach((section, i) => {
