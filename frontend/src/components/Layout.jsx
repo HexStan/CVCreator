@@ -1,5 +1,4 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext.jsx';
 import { useResume } from '../contexts/ResumeContext.jsx';
 import { useFonts } from '../utils/fonts.js';
 import BasicInfoEditor from './Editor/BasicInfoEditor.jsx';
@@ -7,10 +6,10 @@ import RichTextEditor from './Editor/RichTextEditor.jsx';
 import PreviewPanel from './Preview/PreviewPanel.jsx';
 import FontManager from './FontManager.jsx';
 import ExportToolbar from './Export/ExportToolbar.jsx';
+import UserMenu from './UserMenu.jsx';
 import './Layout.css';
 
 export default function Layout() {
-  const { logout } = useAuth();
   const { saving, lastSave, resume, updateResume, updateTemplate, importData, saveNow } = useResume();
   const { fonts, reload: reloadFonts } = useFonts();
   const [splitPercent, setSplitPercent] = useState(45);
@@ -50,7 +49,7 @@ export default function Layout() {
           </span>
           <button className="btn-default btn-sm" onClick={() => setShowFonts(true)}>字体管理</button>
           <ExportToolbar />
-          <button className="btn-default btn-sm" onClick={logout}>退出</button>
+          <UserMenu />
         </div>
       </header>
       <div

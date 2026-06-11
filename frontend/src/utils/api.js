@@ -21,6 +21,10 @@ export const api = {
       request('/api/auth/login', { method: 'POST', body: JSON.stringify({ username, password, remember }) }),
     logout: () => request('/api/auth/logout', { method: 'POST' }),
     me: () => request('/api/auth/me'),
+    changeUsername: (username, password) =>
+      request('/api/auth/username', { method: 'PUT', body: JSON.stringify({ username, password }) }),
+    changePassword: (currentPassword, newPassword) =>
+      request('/api/auth/password', { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) }),
   },
   resume: {
     get: () => request('/api/resume'),

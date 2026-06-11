@@ -64,6 +64,66 @@ def logout():
     return jsonify({'ok': True})
 
 
+@auth_bp.route('/username', methods=['PUT'])
+def change_username():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': '未登录'}), 401
+
+    user = User.query.get(user_id)
+    if not user:
+        session.clear()
+        return jsonify({'error': '未登录'}), 401
+
+    data = request.get_json(silent=True) or {}
+    new_username = (data.get('username') or '').strip()
+    password = (data.get('password') or '')
+
+    if not user.check_password(password):
+        return jsonify({'error': '当前密码错误'}), 403
+
+    if not USERNAME_RE.match(new_username):
+        return jsonify({'error': '用户名仅支持字母、数字、下划线和连字符'}), 400
+
+    if user.username == new_username:
+        return jsonify({'error': '新用户名与当前用户名相同'}), 400
+
+    if User.query.filter_by(username=new_username).first():
+        return jsonify({'error': '用户名已存在'}), 409
+
+    user.username = new_username
+    db.session.commit()
+
+    return jsonify({'ok': True, 'user': {'id': user.id, 'username': user.username}})
+
+
+@auth_bp.route('/password', methods=['PUT'])
+def change_password():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': '未登录'}), 401
+
+    user = User.query.get(user_id)
+    if not user:
+        session.clear()
+        return jsonify({'error': '未登录'}), 401
+
+    data = request.get_json(silent=True) or {}
+    current_password = (data.get('currentPassword') or '')
+    new_password = (data.get('newPassword') or '')
+
+    if not user.check_password(current_password):
+        return jsonify({'error': '当前密码错误'}), 403
+
+    if len(new_password) < PASSWORD_MIN_LEN:
+        return jsonify({'error': '密码不能为空'}), 400
+
+    user.set_password(new_password)
+    db.session.commit()
+
+    return jsonify({'ok': True})
+
+
 @auth_bp.route('/me', methods=['GET'])
 def me():
     user_id = session.get('user_id')

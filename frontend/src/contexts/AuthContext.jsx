@@ -31,8 +31,19 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  const changeUsername = useCallback(async (newUsername, password) => {
+    const d = await api.auth.changeUsername(newUsername, password);
+    setUser(d.user);
+    return d;
+  }, []);
+
+  const changePassword = useCallback(async (currentPassword, newPassword) => {
+    const d = await api.auth.changePassword(currentPassword, newPassword);
+    return d;
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, changeUsername, changePassword }}>
       {children}
     </AuthContext.Provider>
   );
