@@ -1,0 +1,32 @@
+.basic-info-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fields-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.add-field-area {
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+
+.add-field-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.preset-select {
+  font-size: 12px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+}

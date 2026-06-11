@@ -1,0 +1,58 @@
+.classic-header {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #333;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.classic-avatar {
+  width: 72px;
+  height: 96px;
+  flex-shrink: 0;
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+.classic-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.classic-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  flex: 1;
+}
+
+.classic-field {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.classic-field-key {
+  color: #888;
+  margin-right: 4px;
+}
+
+.classic-field-key::after {
+  content: ':';
+}
+
+.classic-field-val {
+  color: #333;
+}
+
+.classic-field-name .classic-field-val {
+  font-size: 24px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.classic-body {
+  /* markdown content follows */
+}

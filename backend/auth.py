@@ -1,0 +1,76 @@
+import re
+import json
+
+from flask import Blueprint, request, jsonify, session
+
+from models import db, User, Resume
+
+auth_bp = Blueprint('auth', __name__)
+
+USERNAME_RE = re.compile(r'^[a-zA-Z0-9_-]{1,64}$')
+PASSWORD_MIN_LEN = 1
+
+
+@auth_bp.route('/register', methods=['POST'])
+def register():
+    data = request.get_json(silent=True) or {}
+    username = (data.get('username') or '').strip()
+    password = (data.get('password') or '')
+
+    if not USERNAME_RE.match(username):
+        return jsonify({'error': '用户名仅支持字母、数字、下划线和连字符'}), 400
+    if len(password) < PASSWORD_MIN_LEN:
+        return jsonify({'error': '密码不能为空'}), 400
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({'error': '用户名已存在'}), 409
+
+    user = User(username=username)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.flush()
+
+    resume = Resume(user_id=user.id)
+    db.session.add(resume)
+    db.session.commit()
+
+    session['user_id'] = user.id
+    session.permanent = True
+    return jsonify({'ok': True, 'user': {'id': user.id, 'username': user.username}})
+
+
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json(silent=True) or {}
+    username = (data.get('username') or '').strip()
+    password = data.get('password', '')
+    remember = data.get('remember', False)
+
+    if not username or not password:
+        return jsonify({'error': '用户名和密码不能为空'}), 400
+
+    user = User.query.filter_by(username=username).first()
+    if not user or not user.check_password(password):
+        return jsonify({'error': '用户名或密码错误'}), 401
+
+    session['user_id'] = user.id
+    session.permanent = remember
+    return jsonify({'ok': True, 'user': {'id': user.id, 'username': user.username}})
+
+
+@auth_bp.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'ok': True})
+
+
+@auth_bp.route('/me', methods=['GET'])
+def me():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'user': None})
+    user = User.query.get(user_id)
+    if not user:
+        session.clear()
+        return jsonify({'user': None})
+    return jsonify({'user': {'id': user.id, 'username': user.username}})
