@@ -46,12 +46,12 @@ export default function Layout() {
       <header className="app-header">
         <span className="app-title">简历制作</span>
         <div className="header-actions">
-          <TemplateSelector value={resume.template} onChange={updateTemplate} />
-          <button className="btn-default btn-sm" onClick={() => setShowFonts(true)}>字体管理</button>
-          <ExportToolbar />
           <span className="save-status">
             {saving ? '保存中...' : (lastSave ? `已保存 ${new Date(lastSave).toLocaleTimeString()}` : '')}
           </span>
+          <TemplateSelector value={resume.template} onChange={updateTemplate} />
+          <button className="btn-default btn-sm" onClick={() => setShowFonts(true)}>字体管理</button>
+          <ExportToolbar />
           <button className="btn-default btn-sm" onClick={logout}>退出</button>
         </div>
       </header>
