@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, Suspense } from 'react';
-import { getTemplate } from '../../templates/registry.js';
+import { getTemplate, getAllTemplates } from '../../templates/registry.js';
 import { splitByPageBreak } from '../../utils/pdfHtml.js';
 import { autoPaginate } from '../../utils/autoPaginate.js';
 import './PreviewPanel.css';
@@ -20,7 +20,7 @@ const MARGIN_CUSTOM = { value: 0, label: '自定义...' };
 
 const PX_PER_MM = 3.779527559;
 
-export default function PreviewPanel({ basicInfo, markdown, template, fontFamily, fonts, onFontFamilyChange }) {
+export default function PreviewPanel({ basicInfo, markdown, template, fontFamily, fonts, onFontFamilyChange, onTemplateChange }) {
   const [paperSize, setPaperSize] = useState('A4');
   const [margin, setMargin] = useState(15);
   const [marginTop, setMarginTop] = useState(15);
@@ -81,6 +81,14 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
   return (
     <div className="preview-panel-root" ref={containerRef}>
       <div className="preview-toolbar">
+        <div className="preview-control-group">
+          <label>样式</label>
+          <select value={template || 'classic'} onChange={(e) => onTemplateChange?.(e.target.value)}>
+            {getAllTemplates().map((t) => (
+              <option key={t.key} value={t.key}>{t.name}</option>
+            ))}
+          </select>
+        </div>
         <div className="preview-control-group">
           <label>纸张</label>
           <select value={paperSize} onChange={(e) => setPaperSize(e.target.value)}>

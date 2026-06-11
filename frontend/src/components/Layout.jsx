@@ -5,7 +5,6 @@ import { useFonts } from '../utils/fonts.js';
 import BasicInfoEditor from './Editor/BasicInfoEditor.jsx';
 import RichTextEditor from './Editor/RichTextEditor.jsx';
 import PreviewPanel from './Preview/PreviewPanel.jsx';
-import TemplateSelector from './TemplateSelector.jsx';
 import FontManager from './FontManager.jsx';
 import ExportToolbar from './Export/ExportToolbar.jsx';
 import './Layout.css';
@@ -49,7 +48,6 @@ export default function Layout() {
           <span className="save-status">
             {saving ? '保存中...' : (lastSave ? `已保存 ${new Date(lastSave).toLocaleTimeString()}` : '')}
           </span>
-          <TemplateSelector value={resume.template} onChange={updateTemplate} />
           <button className="btn-default btn-sm" onClick={() => setShowFonts(true)}>字体管理</button>
           <ExportToolbar />
           <button className="btn-default btn-sm" onClick={logout}>退出</button>
@@ -93,6 +91,7 @@ export default function Layout() {
             template={resume.template}
             fontFamily={resume.data.fontFamily || ''}
             fonts={fonts}
+            onTemplateChange={updateTemplate}
             onFontFamilyChange={(fontFamily) => updateResume((prev) => ({
               ...prev,
               data: { ...prev.data, fontFamily },
