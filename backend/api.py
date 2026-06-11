@@ -5,6 +5,14 @@ from flask import Blueprint, request, jsonify, session
 
 from models import db, Resume
 
+
+def _isoformat(dt):
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.isoformat()
+
 api_bp = Blueprint('api', __name__)
 
 
@@ -32,7 +40,7 @@ def get_resume():
     return jsonify({
         'data': json.loads(resume.data),
         'template': resume.template,
-        'updatedAt': resume.updated_at.isoformat() if resume.updated_at else None,
+        'updatedAt': _isoformat(resume.updated_at),
     })
 
 
@@ -53,4 +61,4 @@ def save_resume():
     resume.updated_at = datetime.now(timezone.utc)
     db.session.commit()
 
-    return jsonify({'ok': True, 'updatedAt': resume.updated_at.isoformat()})
+    return jsonify({'ok': True, 'updatedAt': _isoformat(resume.updated_at)})
