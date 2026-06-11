@@ -16,7 +16,6 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     resume = db.relationship('Resume', back_populates='user', uselist=False, cascade='all, delete-orphan')
-    fonts = db.relationship('Font', back_populates='user', cascade='all, delete-orphan')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -35,16 +34,3 @@ class Resume(db.Model):
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     user = db.relationship('User', back_populates='resume')
-
-
-class Font(db.Model):
-    __tablename__ = 'fonts'
-
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
-    filename = db.Column(db.String(256), nullable=False)
-    original_name = db.Column(db.String(256), nullable=False)
-    format = db.Column(db.String(16), nullable=False)
-    uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
-    user = db.relationship('User', back_populates='fonts')

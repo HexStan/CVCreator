@@ -32,15 +32,6 @@ export const api = {
   },
   fonts: {
     list: () => request('/api/fonts'),
-    upload: (file) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      return fetch(`${BASE}/api/fonts/upload`, { method: 'POST', credentials: 'include', body: formData }).then((r) => {
-        if (!r.ok) return r.json().then((d) => { throw new Error(d.error || '上传失败'); });
-        return r.json();
-      });
-    },
-    delete: (id) => request(`/api/fonts/${id}`, { method: 'DELETE' }),
   },
   export: {
     pdf: (data) =>

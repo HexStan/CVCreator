@@ -6,10 +6,8 @@ services:
       - "5000:5000"
     volumes:
       - data:/app/data
-      # 映射自定义系统字体（WeasyPrint 通过 fontconfig 查找使用）
-      # - ./fonts/custom:/usr/share/fonts/custom:ro
-      # 映射上传字体目录（替代 /app/data/uploads/fonts）
-      # - ./fonts/uploaded:/app/data/uploads/fonts
+      # 映射管理员预置的字体目录
+      - ./backend/fonts:/app/fonts:ro
     environment:
       - SECRET_KEY=change-me-in-production
       - FLASK_DEBUG=false

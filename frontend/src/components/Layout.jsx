@@ -1,20 +1,18 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useResume } from '../contexts/ResumeContext.jsx';
-import { useFonts } from '../utils/fonts.js';
+import { useFonts, getCssFamily } from '../utils/fonts.js';
 import BasicInfoEditor from './Editor/BasicInfoEditor.jsx';
 import RichTextEditor from './Editor/RichTextEditor.jsx';
 import PreviewPanel from './Preview/PreviewPanel.jsx';
-import FontManager from './FontManager.jsx';
 import ExportToolbar from './Export/ExportToolbar.jsx';
 import UserMenu from './UserMenu.jsx';
 import './Layout.css';
 
 export default function Layout() {
   const { saving, lastSave, resume, updateResume, updateTemplate, importData, saveNow } = useResume();
-  const { fonts, reload: reloadFonts } = useFonts();
+  const { fonts, loaded: fontsLoaded } = useFonts();
   const [splitPercent, setSplitPercent] = useState(45);
   const [dragging, setDragging] = useState(false);
-  const [showFonts, setShowFonts] = useState(false);
   const containerRef = useRef(null);
 
   const handleMouseDown = useCallback((e) => {
@@ -39,6 +37,9 @@ export default function Layout() {
     };
   }, [dragging]);
 
+  const fontId = resume.data.fontFamily || '';
+  const fontFamily = getCssFamily(fontId);
+
   return (
     <div className="app-layout">
       <header className="app-header">
@@ -47,7 +48,6 @@ export default function Layout() {
           <span className="save-status">
             {saving ? '保存中...' : (lastSave ? `已保存 ${new Date(lastSave).toLocaleTimeString()}` : '')}
           </span>
-          <button className="btn-default btn-sm" onClick={() => setShowFonts(true)}>字体管理</button>
           <ExportToolbar />
           <UserMenu />
         </div>
@@ -88,17 +88,18 @@ export default function Layout() {
             basicInfo={resume.data.basicInfo || {}}
             markdown={resume.data.markdown || ''}
             template={resume.template}
-            fontFamily={resume.data.fontFamily || ''}
+            fontFamily={fontFamily}
+            fontId={fontId}
             fonts={fonts}
+            fontsLoaded={fontsLoaded}
             onTemplateChange={updateTemplate}
-            onFontFamilyChange={(fontFamily) => updateResume((prev) => ({
+            onFontFamilyChange={(newFontId) => updateResume((prev) => ({
               ...prev,
-              data: { ...prev.data, fontFamily },
+              data: { ...prev.data, fontFamily: newFontId },
             }))}
           />
         </div>
       </div>
-      {showFonts && <FontManager onClose={() => { setShowFonts(false); reloadFonts(); }} />}
     </div>
   );
 }

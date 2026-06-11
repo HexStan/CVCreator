@@ -23,11 +23,8 @@ export default function ExportToolbar() {
   const handlePDF = useCallback(async (settings) => {
     setExporting(true);
     try {
-      const mergedSettings = {
-        ...settings,
-        fontFamily: resume.data.fontFamily || '',
-      };
-      const { styles, content } = await pdfHtml.generate(resume.data, resume.template, mergedSettings);
+      const fontId = resume.data.fontFamily || '';
+      const { styles, content } = await pdfHtml.generate(resume.data, resume.template, settings);
       const blob = await api.export.pdf({
         html: content,
         styles,
@@ -37,8 +34,8 @@ export default function ExportToolbar() {
         marginBottom: settings.marginBottom,
         marginLeft: settings.marginLeft,
         marginRight: settings.marginRight,
-        fontFamily: mergedSettings.fontFamily,
-        fonts: [],
+        fontFamily: fontId,
+        fontId,
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');

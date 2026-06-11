@@ -1,38 +1,44 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { api } from './api.js';
 
-let injectedFamilies = new Set();
+const injectedFamilies = new Set();
+let styleElement = null;
 
-function injectFontFace(font) {
-  const family = `UserFont-${font.id}`;
-  if (injectedFamilies.has(family)) return family;
+function ensureStyleElement() {
+  if (!styleElement) {
+    styleElement = document.createElement('style');
+    styleElement.id = 'system-fonts-css';
+    document.head.appendChild(styleElement);
+  }
+  return styleElement;
+}
 
-  const formatMap = {
-    ttf: 'truetype',
-    otf: 'opentype',
-    woff: 'woff',
-    woff2: 'woff2',
-  };
-
-  const style = document.createElement('style');
-  style.textContent = `@font-face { font-family: "${family}"; src: url("${font.url}") format("${formatMap[font.format] || 'truetype'}"); }`;
-  document.head.appendChild(style);
-  injectedFamilies.add(family);
-  return family;
+function injectAllFontFaces(fonts) {
+  const el = ensureStyleElement();
+  const rules = fonts.map((f) => {
+    const family = f.cssFamily;
+    if (injectedFamilies.has(family)) return '';
+    injectedFamilies.add(family);
+    const format = f.id.toLowerCase().includes('otf') || f.id.toLowerCase().includes('otc')
+      ? 'opentype' : 'truetype';
+    return `@font-face { font-family: "${family}"; src: url("${f.url}") format("${format}"); font-weight: ${f.weight}; font-style: normal; }`;
+  });
+  el.textContent = rules.filter(Boolean).join('\n');
 }
 
 export function useFonts() {
   const [fonts, setFonts] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const loadedRef = useRef(false);
 
   const loadFonts = useCallback(async () => {
+    if (loadedRef.current) return;
     try {
       const data = await api.fonts.list();
-      const fontsWithFamily = data.fonts.map((f) => {
-        const family = injectFontFace(f);
-        return { ...f, family };
-      });
-      setFonts(fontsWithFamily);
+      const list = data.fonts || [];
+      injectAllFontFaces(list);
+      setFonts(list);
+      loadedRef.current = true;
     } catch (e) {
       console.error('加载字体失败:', e);
     } finally {
@@ -44,5 +50,9 @@ export function useFonts() {
     loadFonts();
   }, [loadFonts]);
 
-  return { fonts, loaded, reload: loadFonts };
+  return { fonts, loaded };
+}
+
+export function getCssFamily(fontId) {
+  return fontId ? `SysFont-${fontId}` : '';
 }

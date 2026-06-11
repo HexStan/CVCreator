@@ -20,7 +20,7 @@ const MARGIN_CUSTOM = { value: 0, label: '自定义...' };
 
 const PX_PER_MM = 3.779527559;
 
-export default function PreviewPanel({ basicInfo, markdown, template, fontFamily, fonts, onFontFamilyChange, onTemplateChange }) {
+export default function PreviewPanel({ basicInfo, markdown, template, fontFamily, fontId, fonts, fontsLoaded, onFontFamilyChange, onTemplateChange }) {
   const [paperSize, setPaperSize] = useState('A4');
   const [margin, setMargin] = useState(15);
   const [marginTop, setMarginTop] = useState(15);
@@ -122,13 +122,13 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             <option value="scroll">连续</option>
           </select>
         </div>
-        {fonts && fonts.length > 0 && (
+        {fonts.length > 0 && (
           <div className="preview-control-group">
             <label>字体</label>
-            <select value={fontFamily || ''} onChange={(e) => onFontFamilyChange?.(e.target.value)}>
+            <select value={fontId} onChange={(e) => onFontFamilyChange?.(e.target.value)}>
               <option value="">默认</option>
               {fonts.map((f) => (
-                <option key={f.id} value={f.family}>{f.originalName}</option>
+                <option key={f.id} value={f.id}>{f.label}</option>
               ))}
             </select>
           </div>

@@ -12,8 +12,10 @@ if not SECRET_KEY:
 SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(INSTANCE_DIR, 'resume.db')}"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-FONTS_DIR = os.path.join(INSTANCE_DIR, 'uploads', 'fonts')
+FONTS_DIR = os.environ.get('FONTS_DIR', os.path.join(BASE_DIR, 'fonts'))
+FONTS_CACHE_DIR = os.path.join(INSTANCE_DIR, 'fonts_cache')
 STATIC_DIR = os.environ.get('STATIC_DIR')
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 
-ALLOWED_FONT_EXTENSIONS = {'.ttf', '.otf', '.woff', '.woff2'}
+ALLOWED_FONT_EXTENSIONS = {'.ttf', '.otf', '.ttc', '.otc'}
+SYSTEM_FONT_FAMILY_PREFIX = 'SysFont-'

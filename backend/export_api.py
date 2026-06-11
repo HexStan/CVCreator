@@ -4,7 +4,8 @@ import tempfile
 
 from flask import Blueprint, request, jsonify, send_file, session
 
-from config import FONTS_DIR
+from config import SYSTEM_FONT_FAMILY_PREFIX
+from font_registry import get_registry
 
 export_bp = Blueprint('export', __name__)
 
@@ -58,7 +59,7 @@ def export_pdf():
     margin_bottom = data.get('marginBottom', 15)
     margin_left = data.get('marginLeft', 15)
     margin_right = data.get('marginRight', 15)
-    user_fonts = data.get('fonts', [])
+    font_id = data.get('fontId', '')
 
     css = f"""
 @page {{
@@ -73,17 +74,22 @@ body {{
 """
 
     font_faces = ''
-    if user_fonts:
-        for font in user_fonts:
-            fonts_dir = os.path.join(FONTS_DIR, user_id)
-            font_path = os.path.join(fonts_dir, font['filename'])
-            if os.path.exists(font_path):
-                font_faces += f"""
+    font_family = data.get('fontFamily', 'sans-serif')
+    if font_id:
+        registry = get_registry()
+        system_font = registry.get(font_id)
+        if system_font and os.path.exists(system_font.cached_path):
+            css_family = f'{SYSTEM_FONT_FAMILY_PREFIX}{font_id}'
+            font_path = system_font.cached_path.replace('\\', '/')
+            font_faces += f"""
 @font-face {{
-    font-family: "{font['family']}";
-    src: url("file:///{font_path.replace(chr(92), '/')}");
+    font-family: "{css_family}";
+    src: url("file:///{font_path}");
+    font-weight: {system_font.weight};
+    font-style: normal;
 }}
 """
+            font_family = css_family
 
     full_html = f"""<!DOCTYPE html>
 <html>
@@ -92,7 +98,7 @@ body {{
 <style>
 {css}
 {font_faces}
-body {{ font-family: {data.get('fontFamily', 'sans-serif')}; }}
+body {{ font-family: {font_family}; }}
 </style>
 </head>
 <body>

@@ -30,3 +30,9 @@ Desktop.ini
 .trae/
 *.swp
 *.swo
+
+# Fonts
+*.ttf
+*.otf
+*.ttc
+*.otc

@@ -27,7 +27,7 @@ COPY backend/ ./
 
 COPY --from=frontend-build /app/frontend/dist /app/static
 
-RUN mkdir -p /app/data /usr/share/fonts/custom
+RUN mkdir -p /app/data /app/fonts
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
