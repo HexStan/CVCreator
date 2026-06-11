@@ -124,7 +124,8 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
           </div>
         )}
       </div>
-      <div className="preview-stage" style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>
+      <div className="preview-stage">
+        <div className="preview-stage-inner" style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>
         <Suspense fallback={<div style={{ padding: 20 }}>加载模板...</div>}>
         {paged ? (
           <PagedPreview
@@ -146,6 +147,7 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
           </div>
         )}
         </Suspense>
+        </div>
       </div>
     </div>
   );
