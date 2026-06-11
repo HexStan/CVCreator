@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import { clampWidth } from './presetFields.js';
 
 marked.setOptions({ breaks: true, gfm: true });
 
@@ -69,13 +70,13 @@ function renderBasicInfo(basicInfo) {
     </div>`;
   }
 
-  html += '<div style="display: flex; flex-wrap: wrap; gap: 2px 8px; flex: 1;">';
+  html += '<div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px 8px; flex: 1;">';
 
   for (const field of fields) {
     if (!field.value && field.key !== 'name') continue;
     const isName = field.key === 'name';
-    const widthPct = (field.width / 4) * 100;
-    html += `<div style="font-size: 12px; line-height: 1.5; width: ${widthPct}%; max-width: ${widthPct}%;">`;
+    const w = clampWidth(field.width);
+    html += `<div style="font-size: 12px; line-height: 1.5; grid-column: span ${w}; min-width: 0;">`;
     if (!isName) {
       html += `<span style="color: #888; margin-right: 4px;">${escapeHtml(field.label)}:</span>`;
     }

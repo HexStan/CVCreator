@@ -1,5 +1,6 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
+import { clampWidth } from '../utils/presetFields.js';
 import './common.css';
 import './Classic.css';
 
@@ -19,12 +20,12 @@ export default function ClassicTemplate({ basicInfo, markdown, innerWidth, hideB
             {fields?.map((field) => {
               if (!field.value && field.key !== 'name') return null;
               const isName = field.key === 'name';
-              const widthPct = (field.width / 4) * 100;
+              const w = clampWidth(field.width);
               return (
                 <div
                   key={field.key}
                   className={`classic-field${isName ? ' classic-field-name' : ''}`}
-                  style={{ width: `${widthPct}%`, maxWidth: `${widthPct}%` }}
+                  style={{ gridColumn: `span ${w}` }}
                 >
                   {!isName && <span className="classic-field-key">{field.label}</span>}
                   <span className="classic-field-val">{field.value}</span>

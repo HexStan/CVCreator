@@ -10,6 +10,52 @@
   gap: 6px;
 }
 
+.layout-preview-bar {
+  padding: 6px 8px;
+  background: #f5f5f5;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.layout-preview-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.layout-preview-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.layout-preview-row {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+}
+
+.layout-preview-cell {
+  height: 100%;
+  background: var(--primary);
+  opacity: 0.3;
+  border-radius: 2px;
+  transition: opacity 0.15s;
+}
+
+.layout-preview-row:hover .layout-preview-cell {
+  opacity: 0.55;
+}
+
+.layout-preview-empty {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
 .add-field-area {
   padding-top: 6px;
   border-top: 1px dashed var(--border);

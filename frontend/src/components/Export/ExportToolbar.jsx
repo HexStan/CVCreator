@@ -123,7 +123,7 @@ export default function ExportToolbar() {
     <>
       <div className="export-toolbar-container">
         <button className="btn-primary btn-sm" onClick={() => setShowMenu(!showMenu)} disabled={exporting}>
-          {exporting ? '导出中...' : '导出 ▼'}
+          {exporting ? '导出中...' : '导出与导入 ▼'}
         </button>
         {showMenu && (
           <div className="export-menu">

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { getGearIndex, findGear, clampWidth } from '../../utils/presetFields.js';
 import './FieldItem.css';
 
 export default function FieldItem({
@@ -7,6 +8,8 @@ export default function FieldItem({
   onDragStart, onDragOver, onDrop, onDragEnd, isDragging,
 }) {
   const labelRef = useRef(null);
+  const gear = findGear(clampWidth(field.width));
+  const gearIdx = getGearIndex(clampWidth(field.width));
 
   const handleLabelKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -15,16 +18,27 @@ export default function FieldItem({
     }
   };
 
+  const handleSliderChange = (e) => {
+    const idx = parseInt(e.target.value, 10);
+    const g = widthGeaars[idx];
+    if (g) onWidthChange(g.col);
+  };
+
   return (
     <div
       className={`field-item${isDragging ? ' dragging' : ''}`}
-      draggable
-      onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
-      onDragEnd={onDragEnd}
     >
-      <span className="field-drag-handle" title="拖动排序">&#9776;</span>
+      <span
+        className="field-drag-handle"
+        draggable
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        title="拖动排序"
+      >
+        &#9776;
+      </span>
       <div className="field-inputs">
         <input
           ref={labelRef}
@@ -45,15 +59,15 @@ export default function FieldItem({
       <div className="field-width-control">
         <input
           type="range"
-          min={1}
-          max={widthGeaars.length}
+          min={0}
+          max={widthGeaars.length - 1}
           step={1}
-          value={field.width}
-          onChange={(e) => onWidthChange(parseInt(e.target.value, 10))}
+          value={gearIdx}
+          onChange={handleSliderChange}
           className="width-slider"
-          title={`宽度: ${widthGeaars[field.width - 1]?.label || '1/4'}`}
+          title={`宽度: ${gear.label}`}
         />
-        <span className="width-label">{widthGeaars[field.width - 1]?.label || '1/4'}</span>
+        <span className="width-label">{gear.label}</span>
       </div>
       <button className="btn-danger btn-sm field-remove-btn" onClick={onRemove} title="删除字段">&#10005;</button>
     </div>

@@ -1,21 +1,14 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { useResume } from '../../contexts/ResumeContext.jsx';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import AvatarUploader from './AvatarUploader.jsx';
 import FieldItem from './FieldItem.jsx';
-import { PRESET_FIELDS, ALL_PRESET_KEYS, getPresetField } from '../../utils/presetFields.js';
+import { WIDTH_GEARS, ALL_PRESET_KEYS, getPresetField, clampWidth } from '../../utils/presetFields.js';
 import './BasicInfoEditor.css';
-
-const WIDTH_GEARS = [
-  { value: 1, label: '1/4', pct: 25 },
-  { value: 2, label: '1/2', pct: 50 },
-  { value: 3, label: '3/4', pct: 75 },
-  { value: 4, label: '1/1', pct: 100 },
-];
 
 export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onChange }) {
   const [draggingIndex, setDraggingIndex] = useState(null);
   const dragNode = useRef(null);
   const dragOverIndex = useRef(null);
+  const moved = useRef(false);
 
   const updateField = useCallback((index, updater) => {
     const next = [...fields];
@@ -41,7 +34,7 @@ export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onC
       }
     } else {
       const key = `custom_${Date.now()}`;
-      onChange({ fields: [...fields, { key, label: '新字段', value: '', width: 2 }], avatar, deletedPresetKeys });
+      onChange({ fields: [...fields, { key, label: '新字段', value: '', width: 6 }], avatar, deletedPresetKeys });
     }
   }, [fields, avatar, deletedPresetKeys, onChange]);
 
@@ -54,8 +47,9 @@ export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onC
   }, [fields, avatar, deletedPresetKeys, onChange]);
 
   const handleDragStart = (e, index) => {
+    moved.current = false;
     setDraggingIndex(index);
-    dragNode.current = e.currentTarget;
+    dragNode.current = e.currentTarget.closest('.field-item');
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', index.toString());
     setTimeout(() => {
@@ -73,15 +67,17 @@ export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onC
     if (dragNode.current) dragNode.current.style.opacity = '1';
     const from = draggingIndex;
     const to = dragOverIndex.current;
-    if (from !== null && to !== null && from !== to) {
+    if (from !== null && to !== null && from !== to && moved.current) {
       moveField(from, to);
     }
     setDraggingIndex(null);
     dragOverIndex.current = null;
+    moved.current = false;
   };
 
   const handleDrop = (e, index) => {
     e.preventDefault();
+    moved.current = true;
     const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
     if (!isNaN(from) && from !== index) {
       moveField(from, index);
@@ -107,6 +103,24 @@ export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onC
   const availablePresets = deletedPresetKeys.filter((k) => ALL_PRESET_KEYS.includes(k));
   const hasDeletedPresets = availablePresets.length > 0;
 
+  const layoutRows = useMemo(() => {
+    const rows = [];
+    let currentRow = [];
+    let used = 0;
+    for (const f of fields) {
+      const w = clampWidth(f.width);
+      if (used + w > 12 && currentRow.length > 0) {
+        rows.push(currentRow);
+        currentRow = [];
+        used = 0;
+      }
+      currentRow.push(w);
+      used += w;
+    }
+    if (currentRow.length > 0) rows.push(currentRow);
+    return rows;
+  }, [fields]);
+
   return (
     <div className="basic-info-editor">
       <AvatarUploader value={avatar} onChange={handleAvatarChange} />
@@ -129,6 +143,27 @@ export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onC
             isDragging={draggingIndex === index}
           />
         ))}
+      </div>
+
+      <div className="layout-preview-bar">
+        <span className="layout-preview-label">排版预览</span>
+        <div className="layout-preview-grid">
+          {layoutRows.map((row, ri) => (
+            <div key={ri} className="layout-preview-row">
+              {row.map((colW, ci) => (
+                <div
+                  key={ci}
+                  className="layout-preview-cell"
+                  style={{ width: `${(colW / 12) * 100}%` }}
+                  title={`${colW}/12`}
+                />
+              ))}
+            </div>
+          ))}
+          {layoutRows.length === 0 && (
+            <div className="layout-preview-empty">暂无字段</div>
+          )}
+        </div>
       </div>
 
       <div className="add-field-area">
