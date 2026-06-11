@@ -24,8 +24,6 @@ function splitByH1(markdown) {
 }
 
 function buildTemplateHTML(basicInfo, markdown, templateKey) {
-  const TemplateComponent = getTemplate(templateKey);
-
   const basicInfoClean = {
     ...basicInfo,
     fields: basicInfo.fields || [],
