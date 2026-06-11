@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from flask import Blueprint, request, jsonify, session, send_from_directory, current_app
+from flask import Blueprint, request, jsonify, session, send_from_directory
 
 from config import FONTS_DIR, ALLOWED_FONT_EXTENSIONS
 from models import db, Font

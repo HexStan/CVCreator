@@ -1,5 +1,4 @@
 import re
-import json
 
 from flask import Blueprint, request, jsonify, session
 
@@ -8,7 +7,7 @@ from models import db, User, Resume
 auth_bp = Blueprint('auth', __name__)
 
 USERNAME_RE = re.compile(r'^[a-zA-Z0-9_-]{1,64}$')
-PASSWORD_MIN_LEN = 1
+PASSWORD_MIN_LEN = 6
 
 
 @auth_bp.route('/register', methods=['POST'])
@@ -20,7 +19,7 @@ def register():
     if not USERNAME_RE.match(username):
         return jsonify({'error': '用户名仅支持字母、数字、下划线和连字符'}), 400
     if len(password) < PASSWORD_MIN_LEN:
-        return jsonify({'error': '密码不能为空'}), 400
+        return jsonify({'error': f'密码至少需要{PASSWORD_MIN_LEN}个字符'}), 400
 
     if User.query.filter_by(username=username).first():
         return jsonify({'error': '用户名已存在'}), 409
@@ -116,7 +115,7 @@ def change_password():
         return jsonify({'error': '当前密码错误'}), 403
 
     if len(new_password) < PASSWORD_MIN_LEN:
-        return jsonify({'error': '密码不能为空'}), 400
+        return jsonify({'error': f'密码至少需要{PASSWORD_MIN_LEN}个字符'}), 400
 
     user.set_password(new_password)
     db.session.commit()
