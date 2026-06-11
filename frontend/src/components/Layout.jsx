@@ -43,7 +43,7 @@ export default function Layout() {
   return (
     <div className="app-layout">
       <header className="app-header">
-        <span className="app-title">简历制作</span>
+        <span className="app-title">简历生成器</span>
         <div className="header-actions">
           <span className="save-status">
             {saving ? '保存中...' : (lastSave ? `已保存 ${new Date(lastSave).toLocaleTimeString()}` : '')}

@@ -35,7 +35,7 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h1>简历制作</h1>
+        <h1>简历生成器</h1>
         <h2>{isRegister ? '注册' : '登录'}</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-field">
