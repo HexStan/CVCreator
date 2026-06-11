@@ -27,5 +27,6 @@ Desktop.ini
 # IDE
 .vscode/
 .idea/
+.trae/
 *.swp
 *.swo
