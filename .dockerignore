@@ -3,7 +3,6 @@
 .dockerignore
 Dockerfile
 docker-compose.yml
-docker-entrypoint.sh
 
 __pycache__/
 *.py[cod]
@@ -37,5 +36,4 @@ stop.sh
 restart.ps1
 restart.sh
 
-LICENSE
 *.md
