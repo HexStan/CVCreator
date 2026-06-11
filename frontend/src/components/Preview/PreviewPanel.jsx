@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, Suspense } from 'react';
 import { getTemplate } from '../../templates/registry.js';
 import { splitByPageBreak } from '../../utils/pdfHtml.js';
+import { autoPaginate } from '../../utils/autoPaginate.js';
 import './PreviewPanel.css';
 
 const PAPER_SIZES = {
@@ -154,8 +155,24 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
   );
 }
 
-function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, innerWidth, fontFamily }) {
-  const pages = useMemo(() => splitByPageBreak(markdown), [markdown]);
+function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, innerWidth, fontFamily, paperHeight, marginTopPx, marginBottomPx }) {
+  const explicitPages = useMemo(() => splitByPageBreak(markdown), [markdown]);
+  const [autoPages, setAutoPages] = useState(null);
+
+  const needsAuto = explicitPages.length === 1 && markdown && markdown.trim();
+
+  const pageContentHeight = paperHeight - marginTopPx - marginBottomPx;
+
+  useLayoutEffect(() => {
+    if (!needsAuto) {
+      setAutoPages(null);
+      return;
+    }
+    const pages = autoPaginate(markdown, pageContentHeight, innerWidth);
+    setAutoPages(pages);
+  }, [markdown, pageContentHeight, innerWidth, needsAuto]);
+
+  const pages = needsAuto && autoPages ? autoPages : explicitPages;
 
   const headerMarkdown = pages[0];
   const bodyPages = pages.length > 1 ? pages.slice(1) : [];
