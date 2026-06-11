@@ -110,25 +110,8 @@ const MARKDOWN_CSS = `
 
 async function generate(data, templateKey, settings) {
   const { basicInfo, markdown } = data;
-  const fontFamily = settings?.fontFamily || '';
   const bodyHTML = buildTemplateHTML(basicInfo || {}, markdown || '', templateKey);
-  const bodyStyle = fontFamily ? `body { margin: 0; padding: 0; font-family: "${fontFamily}", sans-serif; }` : 'body { margin: 0; padding: 0; }';
-
-  const fullHTML = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-  ${MARKDOWN_CSS}
-  ${bodyStyle}
-</style>
-</head>
-<body>
-  ${bodyHTML}
-</body>
-</html>`;
-
-  return fullHTML;
+  return { styles: MARKDOWN_CSS, content: bodyHTML };
 }
 
 export default { generate };

@@ -27,9 +27,10 @@ export default function ExportToolbar() {
         ...settings,
         fontFamily: resume.data.fontFamily || '',
       };
-      const html = await pdfHtml.generate(resume.data, resume.template, mergedSettings);
+      const { styles, content } = await pdfHtml.generate(resume.data, resume.template, mergedSettings);
       const blob = await api.export.pdf({
-        html,
+        html: content,
+        styles,
         pageWidth: settings.pageWidth,
         pageHeight: settings.pageHeight,
         marginTop: settings.marginTop,

@@ -51,6 +51,7 @@ def export_pdf():
 
     data = request.get_json(silent=True) or {}
     html = data.get('html', '')
+    styles = data.get('styles', '')
     page_width = data.get('pageWidth', 210)
     page_height = data.get('pageHeight', 297)
     margin_top = data.get('marginTop', 15)
@@ -68,6 +69,7 @@ body {{
     margin: 0;
     padding: 0;
 }}
+{styles}
 """
 
     font_faces = ''
