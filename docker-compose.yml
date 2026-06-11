@@ -1,0 +1,18 @@
+services:
+  app:
+    image: ghcr.io/hexstan/cvcreator:latest
+    container_name: cv-creator
+    ports:
+      - "5000:5000"
+    volumes:
+      - data:/app/data
+      # 映射自定义系统字体（WeasyPrint 通过 fontconfig 查找使用）
+      # - ./fonts/custom:/usr/share/fonts/custom:ro
+      # 映射上传字体目录（替代 /app/data/uploads/fonts）
+      # - ./fonts/uploaded:/app/data/uploads/fonts
+    environment:
+      - SECRET_KEY=change-me-in-production
+      # - CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+
+volumes:
+  data:

@@ -1,9 +1,9 @@
 import os
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 
-from config import SECRET_KEY, SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS, INSTANCE_DIR
+from config import SECRET_KEY, SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS, INSTANCE_DIR, STATIC_DIR
 from models import db
 
 
@@ -16,10 +16,16 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-    CORS(app, supports_credentials=True, origins=[
-        'http://localhost:5173',
-        'http://127.0.0.1:5173',
-    ])
+    cors_origins_raw = os.environ.get('CORS_ORIGINS')
+    if cors_origins_raw:
+        cors_origins = [o.strip() for o in cors_origins_raw.split(',') if o.strip()]
+    else:
+        cors_origins = [
+            'http://localhost:5173',
+            'http://127.0.0.1:5173',
+        ]
+
+    CORS(app, supports_credentials=True, origins=cors_origins)
 
     db.init_app(app)
 
@@ -32,6 +38,17 @@ def create_app():
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(fonts_bp, url_prefix='/api/fonts')
     app.register_blueprint(export_bp, url_prefix='/api/export')
+
+    if STATIC_DIR and os.path.isdir(STATIC_DIR):
+        @app.route('/', defaults={'path': ''})
+        @app.route('/<path:path>')
+        def serve_frontend(path):
+            if not path:
+                return send_from_directory(STATIC_DIR, 'index.html')
+            file_path = os.path.join(STATIC_DIR, path)
+            if os.path.isfile(file_path):
+                return send_from_directory(STATIC_DIR, path)
+            return send_from_directory(STATIC_DIR, 'index.html')
 
     with app.app_context():
         db.create_all()
