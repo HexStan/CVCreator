@@ -1,7 +1,6 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
 import { clampWidth } from '../utils/presetFields.js';
-import './common.css';
 import './Classic.css';
 
 export default function ClassicTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {

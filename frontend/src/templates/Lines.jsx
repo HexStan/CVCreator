@@ -1,6 +1,6 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
-import './common.css';
+import './Lines.css';
 
 export default function LinesTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -49,7 +49,7 @@ export default function LinesTemplate({ basicInfo, markdown, innerWidth, hideBas
         </div>
       )}
       {markdown && (
-        <div style={{ padding: '0 2px' }}>
+        <div className="lines-body" style={{ padding: '0 2px' }}>
           <MarkdownRenderer content={markdown} />
         </div>
       )}

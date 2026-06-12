@@ -1,6 +1,6 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
-import './common.css';
+import './Bold.css';
 
 export default function BoldTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -61,7 +61,7 @@ export default function BoldTemplate({ basicInfo, markdown, innerWidth, hideBasi
         </div>
       )}
       {markdown && (
-        <div style={{ padding: '0 4px' }}>
+        <div className="bold-body" style={{ padding: '0 4px' }}>
           <MarkdownRenderer content={markdown} />
         </div>
       )}

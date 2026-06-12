@@ -1,6 +1,6 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
-import './common.css';
+import './Zen.css';
 
 export default function ZenTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -45,7 +45,7 @@ export default function ZenTemplate({ basicInfo, markdown, innerWidth, hideBasic
         </div>
       )}
       {markdown && (
-        <div style={{ padding: '0 6px' }}>
+        <div className="zen-body" style={{ padding: '0 6px' }}>
           <MarkdownRenderer content={markdown} />
         </div>
       )}

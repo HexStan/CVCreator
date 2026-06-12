@@ -1,7 +1,7 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
 import { clampWidth } from '../utils/presetFields.js';
-import './common.css';
+import './Split.css';
 
 export default function SplitTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -56,7 +56,7 @@ export default function SplitTemplate({ basicInfo, markdown, innerWidth, hideBas
         </div>
       )}
       {markdown && (
-        <div style={{ padding: '0 4px' }}>
+        <div className="split-body" style={{ padding: '0 4px' }}>
           <MarkdownRenderer content={markdown} />
         </div>
       )}

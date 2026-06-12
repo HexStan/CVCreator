@@ -1,6 +1,6 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
-import './common.css';
+import './Minimal.css';
 
 export default function MinimalTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -31,7 +31,7 @@ export default function MinimalTemplate({ basicInfo, markdown, innerWidth, hideB
         </div>
       )}
       {markdown && (
-        <div>
+        <div className="minimal-body">
           <MarkdownRenderer content={markdown} />
         </div>
       )}
