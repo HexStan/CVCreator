@@ -193,11 +193,8 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
 }
 
 function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, innerWidth, fontFamily, paperHeight, marginTopPx, marginBottomPx, templateKey }) {
-  const explicitPages = useMemo(() => splitByPageBreak(markdown), [markdown]);
   const [headerHeight, setHeaderHeight] = useState(0);
   const firstPageRef = useRef(null);
-
-  const needsAuto = explicitPages.length === 1 && markdown && markdown.trim();
 
   const pageContentHeight = paperHeight - marginTopPx - marginBottomPx;
   const firstPageContentHeight = Math.max(0, pageContentHeight - headerHeight);
@@ -206,28 +203,42 @@ function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, inner
   const bodyStyle = useMemo(() => getTemplateBodyStyle(templateKey), [templateKey]);
 
   useLayoutEffect(() => {
-    if (!needsAuto) return;
     const pageEl = firstPageRef.current;
     if (!pageEl) return;
     const headerEl = pageEl.querySelector('[data-section="header"]');
     if (!headerEl) return;
     const h = headerEl.offsetHeight;
     setHeaderHeight((prev) => (Math.abs(h - prev) > 0.5 ? h : prev));
-  });
+  }, [basicInfo, templateKey, innerWidth, fontFamily]);
 
-  const autoPages = useMemo(() => {
-    if (!needsAuto) return null;
-    return autoPaginate(markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily, bodyClass, bodyStyle);
-  }, [markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily, bodyClass, bodyStyle, needsAuto]);
-
-  const pages = needsAuto && autoPages ? autoPages : explicitPages;
+  const pages = useMemo(() => {
+    const sections = splitByPageBreak(markdown);
+    const result = [];
+    for (let i = 0; i < sections.length; i++) {
+      const sectionPages = autoPaginate(
+        sections[i],
+        pageContentHeight,
+        innerWidth,
+        i === 0 ? firstPageContentHeight : null,
+        fontFamily,
+        bodyClass,
+        bodyStyle
+      );
+      if (i === 0) {
+        result.push(...sectionPages);
+      } else {
+        result.push(...sectionPages.filter((p) => p.trim()));
+      }
+    }
+    return result.length > 0 ? result : [''];
+  }, [markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily, bodyClass, bodyStyle]);
 
   const headerMarkdown = pages[0];
   const bodyPages = pages.length > 1 ? pages.slice(1) : [];
 
   return (
     <>
-      <div className="preview-page" ref={needsAuto ? firstPageRef : null} style={pageStyle}>
+      <div className="preview-page" ref={firstPageRef} style={pageStyle}>
         <TemplateComponent
           basicInfo={basicInfo}
           markdown={headerMarkdown}
