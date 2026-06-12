@@ -89,10 +89,18 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
 
   const innerWidth = contentWidthPx - marginLeftVal * PX_PER_MM - marginRightVal * PX_PER_MM;
 
+  const pagePadding = `${marginTopVal * PX_PER_MM}px ${marginRightVal * PX_PER_MM}px ${marginBottomVal * PX_PER_MM}px ${marginLeftVal * PX_PER_MM}px`;
+
   const pageStyle = {
     width: contentWidthPx,
+    height: contentHeightPx,
+    padding: pagePadding,
+  };
+
+  const scrollStyle = {
+    width: contentWidthPx,
     minHeight: contentHeightPx,
-    padding: `${marginTopVal * PX_PER_MM}px ${marginRightVal * PX_PER_MM}px ${marginBottomVal * PX_PER_MM}px ${marginLeftVal * PX_PER_MM}px`,
+    padding: pagePadding,
   };
 
   return (
@@ -170,11 +178,9 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             paperHeight={size.height * PX_PER_MM}
             marginTopPx={marginTopVal * PX_PER_MM}
             marginBottomPx={marginBottomVal * PX_PER_MM}
-            marginLeftPx={marginLeftVal * PX_PER_MM}
-            marginRightPx={marginRightVal * PX_PER_MM}
           />
         ) : (
-          <div className="preview-page" style={pageStyle}>
+          <div className="preview-page" style={scrollStyle}>
             <TemplateComponent basicInfo={basicInfo} markdown={markdown} innerWidth={innerWidth} fontFamily={fontFamily} />
           </div>
         )}
@@ -187,20 +193,28 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
 
 function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, innerWidth, fontFamily, paperHeight, marginTopPx, marginBottomPx }) {
   const explicitPages = useMemo(() => splitByPageBreak(markdown), [markdown]);
-  const [autoPages, setAutoPages] = useState(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const firstPageRef = useRef(null);
 
   const needsAuto = explicitPages.length === 1 && markdown && markdown.trim();
 
   const pageContentHeight = paperHeight - marginTopPx - marginBottomPx;
+  const firstPageContentHeight = Math.max(0, pageContentHeight - headerHeight);
 
   useLayoutEffect(() => {
-    if (!needsAuto) {
-      setAutoPages(null);
-      return;
-    }
-    const pages = autoPaginate(markdown, pageContentHeight, innerWidth);
-    setAutoPages(pages);
-  }, [markdown, pageContentHeight, innerWidth, needsAuto]);
+    if (!needsAuto) return;
+    const pageEl = firstPageRef.current;
+    if (!pageEl) return;
+    const headerEl = pageEl.querySelector('[data-section="header"]');
+    if (!headerEl) return;
+    const h = headerEl.getBoundingClientRect().height;
+    setHeaderHeight((prev) => (Math.abs(h - prev) > 0.5 ? h : prev));
+  });
+
+  const autoPages = useMemo(() => {
+    if (!needsAuto) return null;
+    return autoPaginate(markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily);
+  }, [markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily, needsAuto]);
 
   const pages = needsAuto && autoPages ? autoPages : explicitPages;
 
@@ -209,7 +223,7 @@ function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, inner
 
   return (
     <>
-      <div className="preview-page" style={pageStyle}>
+      <div className="preview-page" ref={needsAuto ? firstPageRef : null} style={pageStyle}>
         <TemplateComponent
           basicInfo={basicInfo}
           markdown={headerMarkdown}

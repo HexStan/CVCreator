@@ -12,7 +12,7 @@ export default function MinimalTemplate({ basicInfo, markdown, innerWidth, hideB
   return (
     <div style={{ fontFamily: fontFamily || '"Helvetica Neue", Arial, sans-serif', maxWidth: innerWidth ? `${innerWidth}px` : undefined }}>
       {!hideBasicInfo && (
-        <div style={{ textAlign: 'center', marginBottom: 14 }}>
+        <div style={{ textAlign: 'center', marginBottom: 14 }} data-section="header">
           {avatar && (
             <div style={{ width: 56, height: 56, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 8px', border: '1px solid #ddd' }}>
               <img src={avatar} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

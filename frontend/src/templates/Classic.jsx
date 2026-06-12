@@ -10,7 +10,7 @@ export default function ClassicTemplate({ basicInfo, markdown, innerWidth, hideB
   return (
     <div className="template-classic" style={{ maxWidth: innerWidth ? `${innerWidth}px` : undefined, fontFamily: fontFamily || undefined }}>
       {!hideBasicInfo && (
-        <div className="classic-header">
+        <div className="classic-header" data-section="header">
           {avatar && (
             <div className="classic-avatar">
               <img src={avatar} alt="头像" />
