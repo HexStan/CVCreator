@@ -133,10 +133,10 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
           </div>
         )}
          <div className="preview-control-group">
-           <label>格式</label>
+           <label>类型</label>
            <select value={paged ? 'paged' : 'scroll'} onChange={(e) => setPaged(e.target.value === 'paged')}>
-             <option value="paged">PDF</option>
-             <option value="scroll">PNG</option>
+             <option value="paged">PDF（分页）</option>
+             <option value="scroll">PNG（单图）</option>
            </select>
          </div>
         {fonts.length > 0 && (
