@@ -1,11 +1,11 @@
 .zen-body .markdown-body {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.8;
   color: #666;
 }
 
 .zen-body .markdown-body h1 {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 200;
   letter-spacing: 3px;
   margin: 0 0 12px 0;
@@ -16,7 +16,7 @@
 }
 
 .zen-body .markdown-body h2 {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 300;
   letter-spacing: 1.5px;
   margin: 12px 0 6px 0;
@@ -25,7 +25,7 @@
 }
 
 .zen-body .markdown-body h3 {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   letter-spacing: 1px;
   margin: 8px 0 4px 0;
