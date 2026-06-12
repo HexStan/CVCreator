@@ -13,6 +13,22 @@ const templatesMap = {
     name: '极简',
     component: lazy(() => import('./Minimal.jsx')),
   },
+  split: {
+    name: '双栏',
+    component: lazy(() => import('./Split.jsx')),
+  },
+  lines: {
+    name: '线条',
+    component: lazy(() => import('./Lines.jsx')),
+  },
+  bold: {
+    name: '粗犷',
+    component: lazy(() => import('./Bold.jsx')),
+  },
+  zen: {
+    name: '禅意',
+    component: lazy(() => import('./Zen.jsx')),
+  },
 };
 
 export function getTemplate(key) {
