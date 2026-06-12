@@ -13,7 +13,7 @@ export default function ModernTemplate({ basicInfo, markdown, innerWidth, hideBa
   return (
     <div style={{ fontFamily: fontFamily || '"Segoe UI", sans-serif', maxWidth: innerWidth ? `${innerWidth}px` : undefined }}>
       {!hideBasicInfo && (
-        <div style={{ marginBottom: 12 }}>
+        <div style={{ marginBottom: 12 }} data-section="header">
           <div style={{ background: '#1a1a2e', color: '#eee', padding: 12, borderRadius: 4, display: 'flex', gap: 16 }}>
             {avatar && (
               <div style={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid #e94560' }}>

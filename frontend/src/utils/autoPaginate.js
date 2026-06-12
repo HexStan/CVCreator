@@ -8,64 +8,84 @@ export function splitByPageBreak(markdown) {
 
 let measureContainer = null;
 
-function getMeasureContainer() {
-  if (measureContainer && document.body.contains(measureContainer)) return measureContainer;
+function getMeasureContainer(fontFamily) {
+  if (measureContainer && document.body.contains(measureContainer)) {
+    measureContainer.style.fontFamily = fontFamily || '';
+    return measureContainer;
+  }
 
   measureContainer = document.createElement('div');
   measureContainer.style.cssText =
-    'position:fixed;top:0;left:-9999px;visibility:hidden;pointer-events:none;';
+    'position:fixed;top:0;left:-9999px;visibility:hidden;pointer-events:none;overflow:hidden;';
   measureContainer.className = 'markdown-body';
+  measureContainer.style.fontFamily = fontFamily || '';
   document.body.appendChild(measureContainer);
   return measureContainer;
 }
 
-function measureBlockHeight(blockHTML, width) {
-  const container = getMeasureContainer();
+function measureCumulativeHeight(htmls, width, fontFamily) {
+  const container = getMeasureContainer(fontFamily);
   container.style.width = `${width}px`;
+  container.innerHTML = '';
 
-  const wrapper = document.createElement('div');
-  wrapper.innerHTML = blockHTML;
-  container.appendChild(wrapper);
+  for (const html of htmls) {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    container.appendChild(wrapper);
+  }
 
-  const style = window.getComputedStyle(wrapper);
-  const height =
-    wrapper.getBoundingClientRect().height +
-    (parseFloat(style.marginTop) || 0) +
-    (parseFloat(style.marginBottom) || 0);
-
-  container.removeChild(wrapper);
+  const height = container.getBoundingClientRect().height;
+  container.innerHTML = '';
   return height;
 }
 
-export function autoPaginate(markdown, pageContentHeightPx, contentWidthPx) {
+export function autoPaginate(markdown, pageContentHeightPx, contentWidthPx, firstPageContentHeightPx = null, fontFamily = null) {
   if (!markdown || !markdown.trim()) return [''];
 
   const tokens = marked.lexer(markdown);
-  const pages = [];
-  let currentPageRaws = [];
-  let currentHeight = 0;
-
+  const blocks = [];
   for (const token of tokens) {
     if (token.type === 'space') continue;
     if (!token.raw && token.type !== 'hr') continue;
-
     const raw = token.raw || '---';
-    const blockHTML = marked.parse(raw, { async: false });
-    const blockHeight = measureBlockHeight(blockHTML, contentWidthPx);
+    blocks.push({ raw, html: marked.parse(raw, { async: false }) });
+  }
 
-    if (currentHeight + blockHeight > pageContentHeightPx && currentPageRaws.length > 0) {
-      pages.push(currentPageRaws.join('\n\n'));
-      currentPageRaws = [];
-      currentHeight = 0;
+  if (blocks.length === 0) return [''];
+
+  const pages = [];
+  let pageBlocks = [];
+  let isFirstPage = true;
+
+  for (const block of blocks) {
+    const capacity = (isFirstPage && firstPageContentHeightPx != null)
+      ? firstPageContentHeightPx
+      : pageContentHeightPx;
+
+    if (pageBlocks.length === 0) {
+      pageBlocks.push(block);
+      continue;
     }
 
-    currentPageRaws.push(raw);
-    currentHeight += blockHeight;
+    const testBlocks = pageBlocks.concat(block);
+    const totalHeight = measureCumulativeHeight(
+      testBlocks.map((b) => b.html),
+      contentWidthPx,
+      fontFamily
+    );
+
+    if (totalHeight > capacity) {
+      pages.push(pageBlocks.map((b) => b.raw).join('\n\n'));
+      pageBlocks = [block];
+      isFirstPage = false;
+    } else {
+      pageBlocks.push(block);
+    }
   }
 
-  if (currentPageRaws.length > 0) {
-    pages.push(currentPageRaws.join('\n\n'));
+  if (pageBlocks.length > 0) {
+    pages.push(pageBlocks.map((b) => b.raw).join('\n\n'));
   }
 
-  return pages.length > 0 ? pages : [''];
+  return pages;
 }
