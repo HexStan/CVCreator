@@ -32,12 +32,10 @@ def create_app():
     from auth import auth_bp
     from api import api_bp
     from fonts_api import fonts_bp
-    from export_api import export_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(fonts_bp, url_prefix='/api/fonts')
-    app.register_blueprint(export_bp, url_prefix='/api/export')
 
     if STATIC_DIR and os.path.isdir(STATIC_DIR):
         @app.route('/', defaults={'path': ''})

@@ -33,23 +33,4 @@ export const api = {
   fonts: {
     list: () => request('/api/fonts'),
   },
-  export: {
-    pdf: (data) =>
-      fetch(`${BASE}/api/export/pdf`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      }).then(async (r) => {
-        if (!r.ok) {
-          const contentType = r.headers.get('content-type') || '';
-          if (contentType.includes('application/json')) {
-            const errData = await r.json();
-            throw new Error(errData.error || 'PDF 导出失败');
-          }
-          throw new Error('PDF 导出失败');
-        }
-        return r.blob();
-      }),
-  },
 };

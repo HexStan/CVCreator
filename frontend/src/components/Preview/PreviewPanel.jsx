@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, Suspense } from 'react';
 import { getTemplate, getAllTemplates } from '../../templates/registry.js';
-import { splitByPageBreak } from '../../utils/pdfHtml.js';
-import { autoPaginate } from '../../utils/autoPaginate.js';
+import { splitByPageBreak, autoPaginate } from '../../utils/autoPaginate.js';
+import { exportPNG, exportPDF } from '../../utils/exportService.js';
 import './PreviewPanel.css';
 
 const PAPER_SIZES = {
@@ -30,6 +30,7 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
   const [paged, setPaged] = useState(true);
   const [customMargins, setCustomMargins] = useState(false);
   const [scale, setScale] = useState(1);
+  const [exporting, setExporting] = useState(false);
   const containerRef = useRef(null);
 
   const size = PAPER_SIZES[paperSize] || PAPER_SIZES.A4;
@@ -62,6 +63,22 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
       setMargin(val);
     }
   };
+
+  const handleExport = useCallback(async () => {
+    if (!containerRef.current) return;
+    setExporting(true);
+    try {
+      if (paged) {
+        await exportPDF(containerRef.current, size);
+      } else {
+        await exportPNG(containerRef.current);
+      }
+    } catch (e) {
+      alert('导出失败: ' + e.message);
+    } finally {
+      setExporting(false);
+    }
+  }, [paged, size]);
 
   const marginPresetValue = customMargins ? -1 : margin;
 
@@ -115,13 +132,13 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             <span className="margin-unit">mm</span>
           </div>
         )}
-        <div className="preview-control-group">
-          <label>模式</label>
-          <select value={paged ? 'paged' : 'scroll'} onChange={(e) => setPaged(e.target.value === 'paged')}>
-            <option value="paged">分页</option>
-            <option value="scroll">连续</option>
-          </select>
-        </div>
+         <div className="preview-control-group">
+           <label>格式</label>
+           <select value={paged ? 'paged' : 'scroll'} onChange={(e) => setPaged(e.target.value === 'paged')}>
+             <option value="paged">PDF</option>
+             <option value="scroll">PNG</option>
+           </select>
+         </div>
         {fonts.length > 0 && (
           <div className="preview-control-group">
             <label>字体</label>
@@ -133,6 +150,11 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             </select>
           </div>
         )}
+        <div className="preview-control-group">
+          <button className="btn-primary btn-sm" onClick={handleExport} disabled={exporting}>
+            {exporting ? '导出中...' : '导出'}
+          </button>
+        </div>
       </div>
       <div className="preview-stage">
         <div className="preview-stage-inner" style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>

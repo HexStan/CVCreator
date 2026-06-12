@@ -1,5 +1,11 @@
 import { marked } from 'marked';
 
+export function splitByPageBreak(markdown) {
+  if (!markdown) return [''];
+  const sections = markdown.split(/<!--\s*pagebreak\s*-->/g);
+  return sections.map((s) => s.trim()).filter((s, i) => s || i === 0);
+}
+
 let measureContainer = null;
 
 function getMeasureContainer() {

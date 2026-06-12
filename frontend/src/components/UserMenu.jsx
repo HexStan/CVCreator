@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import { useResume } from '../contexts/ResumeContext.jsx';
+import { exportJSON } from '../utils/exportService.js';
 import './UserMenu.css';
 
 export default function UserMenu() {
   const { user, logout, changeUsername, changePassword } = useAuth();
+  const { resume, importData } = useResume();
   const [menuOpen, setMenuOpen] = useState(false);
   const [modal, setModal] = useState(null);
   const menuRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -23,6 +27,28 @@ export default function UserMenu() {
     setMenuOpen(false);
     await logout();
   }, [logout]);
+
+  const handleJSONExport = useCallback(() => {
+    setMenuOpen(false);
+    exportJSON(resume.data);
+  }, [resume.data]);
+
+  const handleJSONImport = useCallback((e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setMenuOpen(false);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        importData(data);
+      } catch (err) {
+        alert('JSON 解析失败: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }, [importData]);
 
   return (
     <div className="user-menu" ref={menuRef}>
@@ -52,6 +78,14 @@ export default function UserMenu() {
           >
             修改用户名
           </button>
+          <div className="user-menu-divider" />
+          <button className="user-menu-item" onClick={handleJSONExport}>
+            导出 JSON
+          </button>
+          <button className="user-menu-item" onClick={() => { fileInputRef.current?.click(); }}>
+            导入 JSON
+          </button>
+          <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleJSONImport} />
           <div className="user-menu-divider" />
           <button className="user-menu-item user-menu-item-danger" onClick={handleLogout}>
             退出登录

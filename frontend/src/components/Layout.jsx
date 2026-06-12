@@ -4,7 +4,6 @@ import { useFonts, getCssFamily } from '../utils/fonts.js';
 import BasicInfoEditor from './Editor/BasicInfoEditor.jsx';
 import RichTextEditor from './Editor/RichTextEditor.jsx';
 import PreviewPanel from './Preview/PreviewPanel.jsx';
-import ExportToolbar from './Export/ExportToolbar.jsx';
 import UserMenu from './UserMenu.jsx';
 import './Layout.css';
 
@@ -48,7 +47,6 @@ export default function Layout() {
           <span className="save-status">
             {saving ? '保存中...' : (lastSave ? `已保存 ${new Date(lastSave).toLocaleTimeString()}` : '')}
           </span>
-          <ExportToolbar />
           <UserMenu />
         </div>
       </header>
