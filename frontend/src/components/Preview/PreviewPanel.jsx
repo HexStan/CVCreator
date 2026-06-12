@@ -140,13 +140,6 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             <span className="margin-unit">mm</span>
           </div>
         )}
-         <div className="preview-control-group">
-           <label>类型</label>
-           <select value={paged ? 'paged' : 'scroll'} onChange={(e) => setPaged(e.target.value === 'paged')}>
-             <option value="paged">PDF（分页）</option>
-             <option value="scroll">PNG（单图）</option>
-           </select>
-         </div>
         {fonts.length > 0 && (
           <div className="preview-control-group">
             <label>字体</label>
@@ -158,6 +151,13 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             </select>
           </div>
         )}
+         <div className="preview-control-group">
+           <label>类型</label>
+           <select value={paged ? 'paged' : 'scroll'} onChange={(e) => setPaged(e.target.value === 'paged')}>
+             <option value="paged">PDF（分页）</option>
+             <option value="scroll">PNG（单图）</option>
+           </select>
+         </div>
         <div className="preview-control-group">
           <button className="btn-primary btn-sm" onClick={handleExport} disabled={exporting}>
             {exporting ? '导出中...' : '导出'}
