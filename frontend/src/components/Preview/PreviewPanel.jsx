@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, Suspense } from 'react';
-import { getTemplate, getAllTemplates } from '../../templates/registry.js';
+import { getTemplate, getAllTemplates, getTemplateBodyClass, getTemplateBodyStyle } from '../../templates/registry.js';
 import { splitByPageBreak, autoPaginate } from '../../utils/autoPaginate.js';
 import { exportPNG, exportPDF } from '../../utils/exportService.js';
 import './PreviewPanel.css';
@@ -178,6 +178,7 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             paperHeight={size.height * PX_PER_MM}
             marginTopPx={marginTopVal * PX_PER_MM}
             marginBottomPx={marginBottomVal * PX_PER_MM}
+            templateKey={template}
           />
         ) : (
           <div className="preview-page" style={scrollStyle}>
@@ -191,7 +192,7 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
   );
 }
 
-function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, innerWidth, fontFamily, paperHeight, marginTopPx, marginBottomPx }) {
+function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, innerWidth, fontFamily, paperHeight, marginTopPx, marginBottomPx, templateKey }) {
   const explicitPages = useMemo(() => splitByPageBreak(markdown), [markdown]);
   const [headerHeight, setHeaderHeight] = useState(0);
   const firstPageRef = useRef(null);
@@ -201,20 +202,23 @@ function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, inner
   const pageContentHeight = paperHeight - marginTopPx - marginBottomPx;
   const firstPageContentHeight = Math.max(0, pageContentHeight - headerHeight);
 
+  const bodyClass = useMemo(() => getTemplateBodyClass(templateKey), [templateKey]);
+  const bodyStyle = useMemo(() => getTemplateBodyStyle(templateKey), [templateKey]);
+
   useLayoutEffect(() => {
     if (!needsAuto) return;
     const pageEl = firstPageRef.current;
     if (!pageEl) return;
     const headerEl = pageEl.querySelector('[data-section="header"]');
     if (!headerEl) return;
-    const h = headerEl.getBoundingClientRect().height;
+    const h = headerEl.offsetHeight;
     setHeaderHeight((prev) => (Math.abs(h - prev) > 0.5 ? h : prev));
   });
 
   const autoPages = useMemo(() => {
     if (!needsAuto) return null;
-    return autoPaginate(markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily);
-  }, [markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily, needsAuto]);
+    return autoPaginate(markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily, bodyClass, bodyStyle);
+  }, [markdown, pageContentHeight, innerWidth, firstPageContentHeight, fontFamily, bodyClass, bodyStyle, needsAuto]);
 
   const pages = needsAuto && autoPages ? autoPages : explicitPages;
 

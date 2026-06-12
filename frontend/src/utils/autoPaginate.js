@@ -6,40 +6,60 @@ export function splitByPageBreak(markdown) {
   return sections.map((s) => s.trim()).filter((s, i) => s || i === 0);
 }
 
-let measureContainer = null;
+let measureOuter = null;
+let measureBody = null;
+let measureContent = null;
+let lastBodyClass = null;
 
-function getMeasureContainer(fontFamily) {
-  if (measureContainer && document.body.contains(measureContainer)) {
-    measureContainer.style.fontFamily = fontFamily || '';
-    return measureContainer;
+function getMeasureContainer(fontFamily, bodyClass, bodyStyle) {
+  if (!measureOuter || !document.body.contains(measureOuter)) {
+    measureOuter = document.createElement('div');
+    measureOuter.style.cssText =
+      'position:fixed;top:0;left:-9999px;visibility:hidden;pointer-events:none;overflow:hidden;';
+
+    measureBody = document.createElement('div');
+    measureOuter.appendChild(measureBody);
+
+    measureContent = document.createElement('div');
+    measureContent.className = 'markdown-body';
+    measureBody.appendChild(measureContent);
+
+    document.body.appendChild(measureOuter);
   }
 
-  measureContainer = document.createElement('div');
-  measureContainer.style.cssText =
-    'position:fixed;top:0;left:-9999px;visibility:hidden;pointer-events:none;overflow:hidden;';
-  measureContainer.className = 'markdown-body';
-  measureContainer.style.fontFamily = fontFamily || '';
-  document.body.appendChild(measureContainer);
-  return measureContainer;
+  measureOuter.style.fontFamily = fontFamily || '';
+
+  if (bodyClass !== lastBodyClass) {
+    lastBodyClass = bodyClass;
+    measureBody.className = bodyClass || '';
+    measureBody.style.cssText = '';
+    if (bodyStyle && typeof bodyStyle === 'object') {
+      for (const [prop, val] of Object.entries(bodyStyle)) {
+        measureBody.style[prop] = val;
+      }
+    }
+  }
+
+  return { outer: measureOuter, content: measureContent };
 }
 
-function measureCumulativeHeight(htmls, width, fontFamily) {
-  const container = getMeasureContainer(fontFamily);
-  container.style.width = `${width}px`;
-  container.innerHTML = '';
+function measureCumulativeHeight(htmls, width, fontFamily, bodyClass, bodyStyle) {
+  const { outer, content } = getMeasureContainer(fontFamily, bodyClass, bodyStyle);
+  outer.style.width = `${width}px`;
+  content.innerHTML = '';
 
   for (const html of htmls) {
     const wrapper = document.createElement('div');
     wrapper.innerHTML = html;
-    container.appendChild(wrapper);
+    content.appendChild(wrapper);
   }
 
-  const height = container.getBoundingClientRect().height;
-  container.innerHTML = '';
+  const height = outer.getBoundingClientRect().height;
+  content.innerHTML = '';
   return height;
 }
 
-export function autoPaginate(markdown, pageContentHeightPx, contentWidthPx, firstPageContentHeightPx = null, fontFamily = null) {
+export function autoPaginate(markdown, pageContentHeightPx, contentWidthPx, firstPageContentHeightPx = null, fontFamily = null, bodyClass = null, bodyStyle = null) {
   if (!markdown || !markdown.trim()) return [''];
 
   const tokens = marked.lexer(markdown);
@@ -71,7 +91,9 @@ export function autoPaginate(markdown, pageContentHeightPx, contentWidthPx, firs
     const totalHeight = measureCumulativeHeight(
       testBlocks.map((b) => b.html),
       contentWidthPx,
-      fontFamily
+      fontFamily,
+      bodyClass,
+      bodyStyle
     );
 
     if (totalHeight > capacity) {
