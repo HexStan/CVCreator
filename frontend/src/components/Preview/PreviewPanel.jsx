@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, useMe
 import { getTemplate, getAllTemplates, getTemplateBodyClass, getTemplateBodyStyle } from '../../templates/registry.js';
 import { splitByPageBreak, autoPaginate } from '../../utils/autoPaginate.js';
 import { exportPNG, exportPDF } from '../../utils/exportService.js';
-import './PreviewPanel.css';
 
 const PAPER_SIZES = {
   A4: { width: 210, height: 297, label: 'A4' },
@@ -104,27 +103,27 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
   };
 
   return (
-    <div className="preview-panel-root" ref={containerRef}>
-      <div className="preview-toolbar">
-        <div className="preview-control-group">
-          <label>样式</label>
-          <select value={template || 'classic'} onChange={(e) => onTemplateChange?.(e.target.value)}>
+    <div className="flex flex-col h-full overflow-hidden" ref={containerRef}>
+      <div className="flex items-center gap-3 p-2 px-3 bg-surface border-b border-border shrink-0 flex-wrap">
+        <div className="flex items-center gap-1">
+          <label className="text-xs text-text-secondary whitespace-nowrap">样式</label>
+          <select className="text-xs py-0.5 px-1.5 border border-border rounded-[3px] bg-surface" value={template || 'classic'} onChange={(e) => onTemplateChange?.(e.target.value)}>
             {getAllTemplates().map((t) => (
               <option key={t.key} value={t.key}>{t.name}</option>
             ))}
           </select>
         </div>
-        <div className="preview-control-group">
-          <label>纸张</label>
-          <select value={paperSize} onChange={(e) => setPaperSize(e.target.value)}>
+        <div className="flex items-center gap-1">
+          <label className="text-xs text-text-secondary whitespace-nowrap">纸张</label>
+          <select className="text-xs py-0.5 px-1.5 border border-border rounded-[3px] bg-surface" value={paperSize} onChange={(e) => setPaperSize(e.target.value)}>
             {Object.entries(PAPER_SIZES).map(([key, sz]) => (
               <option key={key} value={key}>{sz.label} ({sz.width}×{sz.height}mm)</option>
             ))}
           </select>
         </div>
-        <div className="preview-control-group">
-          <label>边距</label>
-          <select value={marginPresetValue} onChange={handleMarginPresetChange}>
+        <div className="flex items-center gap-1">
+          <label className="text-xs text-text-secondary whitespace-nowrap">边距</label>
+          <select className="text-xs py-0.5 px-1.5 border border-border rounded-[3px] bg-surface" value={marginPresetValue} onChange={handleMarginPresetChange}>
             {MARGIN_PRESETS.map((p) => (
               <option key={p.value} value={p.value}>{p.label}</option>
             ))}
@@ -132,18 +131,18 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
           </select>
         </div>
         {customMargins && (
-          <div className="preview-custom-margins">
-            <label>上</label><input type="number" value={marginTop} onChange={(e) => setMarginTop(Number(e.target.value) || 0)} min="0" step="1" size="3" />
-            <label>下</label><input type="number" value={marginBottom} onChange={(e) => setMarginBottom(Number(e.target.value) || 0)} min="0" step="1" size="3" />
-            <label>左</label><input type="number" value={marginLeft} onChange={(e) => setMarginLeft(Number(e.target.value) || 0)} min="0" step="1" size="3" />
-            <label>右</label><input type="number" value={marginRight} onChange={(e) => setMarginRight(Number(e.target.value) || 0)} min="0" step="1" size="3" />
-            <span className="margin-unit">mm</span>
+          <div className="flex items-center gap-0.5">
+            <label className="text-[11px] text-text-secondary">上</label><input type="number" className="w-[38px] text-[11px] py-0.5 px-1 border border-border rounded-[3px] text-center" value={marginTop} onChange={(e) => setMarginTop(Number(e.target.value) || 0)} min="0" step="1" size="3" />
+            <label className="text-[11px] text-text-secondary">下</label><input type="number" className="w-[38px] text-[11px] py-0.5 px-1 border border-border rounded-[3px] text-center" value={marginBottom} onChange={(e) => setMarginBottom(Number(e.target.value) || 0)} min="0" step="1" size="3" />
+            <label className="text-[11px] text-text-secondary">左</label><input type="number" className="w-[38px] text-[11px] py-0.5 px-1 border border-border rounded-[3px] text-center" value={marginLeft} onChange={(e) => setMarginLeft(Number(e.target.value) || 0)} min="0" step="1" size="3" />
+            <label className="text-[11px] text-text-secondary">右</label><input type="number" className="w-[38px] text-[11px] py-0.5 px-1 border border-border rounded-[3px] text-center" value={marginRight} onChange={(e) => setMarginRight(Number(e.target.value) || 0)} min="0" step="1" size="3" />
+            <span className="text-[10px] text-text-secondary">mm</span>
           </div>
         )}
         {fonts.length > 0 && (
-          <div className="preview-control-group">
-            <label>字体</label>
-            <select value={fontId} onChange={(e) => onFontFamilyChange?.(e.target.value)}>
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-text-secondary whitespace-nowrap">字体</label>
+            <select className="text-xs py-0.5 px-1.5 border border-border rounded-[3px] bg-surface" value={fontId} onChange={(e) => onFontFamilyChange?.(e.target.value)}>
               <option value="">默认</option>
               {fonts.map((f) => (
                 <option key={f.id} value={f.id}>{f.label}</option>
@@ -151,21 +150,21 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             </select>
           </div>
         )}
-         <div className="preview-control-group">
-           <label>类型</label>
-           <select value={paged ? 'paged' : 'scroll'} onChange={(e) => setPaged(e.target.value === 'paged')}>
+         <div className="flex items-center gap-1">
+           <label className="text-xs text-text-secondary whitespace-nowrap">类型</label>
+           <select className="text-xs py-0.5 px-1.5 border border-border rounded-[3px] bg-surface" value={paged ? 'paged' : 'scroll'} onChange={(e) => setPaged(e.target.value === 'paged')}>
              <option value="paged">PDF（分页）</option>
              <option value="scroll">PNG（单图）</option>
            </select>
          </div>
-        <div className="preview-control-group">
+        <div className="flex items-center gap-1">
           <button className="btn-primary btn-sm" onClick={handleExport} disabled={exporting}>
             {exporting ? '导出中...' : '导出'}
           </button>
         </div>
       </div>
-      <div className="preview-stage">
-        <div className="preview-stage-inner" style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>
+      <div className="flex-1 overflow-auto p-5" data-section="preview-stage">
+        <div className="flex flex-col items-center" data-section="preview-stage-inner" style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>
         <Suspense fallback={<div style={{ padding: 20 }}>加载模板...</div>}>
         {paged ? (
           <PagedPreview
@@ -181,7 +180,7 @@ export default function PreviewPanel({ basicInfo, markdown, template, fontFamily
             templateKey={template}
           />
         ) : (
-          <div className="preview-page" style={scrollStyle}>
+          <div className="bg-white shadow-[0_2px_12px_rgba(0,0,0,0.1)] mb-0 overflow-hidden box-border" data-section="preview-page" style={scrollStyle}>
             <TemplateComponent basicInfo={basicInfo} markdown={markdown} innerWidth={innerWidth} fontFamily={fontFamily} />
           </div>
         )}
@@ -238,7 +237,7 @@ function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, inner
 
   return (
     <>
-      <div className="preview-page" ref={firstPageRef} style={pageStyle}>
+      <div className="bg-white shadow-[0_2px_12px_rgba(0,0,0,0.1)] mb-0 overflow-hidden box-border" data-section="preview-page" ref={firstPageRef} style={pageStyle}>
         <TemplateComponent
           basicInfo={basicInfo}
           markdown={headerMarkdown}
@@ -247,7 +246,7 @@ function PagedPreview({ pageStyle, basicInfo, markdown, TemplateComponent, inner
         />
       </div>
       {bodyPages.map((pageContent, i) => (
-        <div key={i} className="preview-page preview-page-break" style={pageStyle}>
+        <div key={i} className="bg-white shadow-[0_2px_12px_rgba(0,0,0,0.1)] mb-0 overflow-hidden box-border border-t-2 border-dashed border-border mt-4" data-section="preview-page" style={pageStyle}>
           <TemplateComponent
             basicInfo={basicInfo}
             markdown={pageContent}

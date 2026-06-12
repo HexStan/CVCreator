@@ -5,7 +5,6 @@ import BasicInfoEditor from './Editor/BasicInfoEditor.jsx';
 import RichTextEditor from './Editor/RichTextEditor.jsx';
 import PreviewPanel from './Preview/PreviewPanel.jsx';
 import UserMenu from './UserMenu.jsx';
-import './Layout.css';
 
 export default function Layout() {
   const { saving, lastSave, resume, updateResume, updateTemplate, importData, saveNow } = useResume();
@@ -40,11 +39,11 @@ export default function Layout() {
   const fontFamily = getCssFamily(fontId);
 
   return (
-    <div className="app-layout">
-      <header className="app-header">
-        <span className="app-title">简历生成器</span>
-        <div className="header-actions">
-          <span className="save-status">
+    <div className="flex flex-col h-full">
+      <header className="flex items-center justify-between h-12 px-4 bg-surface border-b border-border shrink-0">
+        <span className="text-[15px] font-semibold text-primary">简历生成器</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-text-secondary min-w-[80px]">
             {saving ? '保存中...' : (lastSave ? `已保存 ${new Date(lastSave).toLocaleTimeString()}` : '')}
           </span>
           <UserMenu />
@@ -52,11 +51,11 @@ export default function Layout() {
       </header>
       <div
         ref={containerRef}
-        className={`main-content${dragging ? ' dragging' : ''}`}
+        className={`flex flex-1 overflow-hidden${dragging ? ' cursor-col-resize select-none' : ''}`}
       >
-        <div className="edit-panel" style={{ width: `${splitPercent}%` }}>
-          <div className="edit-section">
-            <h3 className="section-title">基本信息</h3>
+        <div className="flex flex-col overflow-hidden border-r border-border bg-surface" style={{ width: `${splitPercent}%` }}>
+          <div className="p-3 overflow-y-auto max-h-[50%]">
+            <h3 className="text-[13px] font-semibold text-text-secondary mb-2.5 uppercase tracking-[0.5px]">基本信息</h3>
             <BasicInfoEditor
               fields={resume.data.basicInfo?.fields || []}
               avatar={resume.data.basicInfo?.avatar || ''}
@@ -67,8 +66,8 @@ export default function Layout() {
               }))}
             />
           </div>
-          <div className="edit-section edit-section-grow">
-            <h3 className="section-title">详细内容</h3>
+          <div className="flex-1 max-h-none p-3 overflow-y-auto border-t border-border">
+            <h3 className="text-[13px] font-semibold text-text-secondary mb-2.5 uppercase tracking-[0.5px]">详细内容</h3>
             <RichTextEditor
               value={resume.data.markdown || ''}
               onChange={(markdown) => updateResume((prev) => ({
@@ -78,10 +77,10 @@ export default function Layout() {
             />
           </div>
         </div>
-        <div className="split-divider" onMouseDown={handleMouseDown}>
-          <div className="split-handle" />
+        <div className="group w-1.5 bg-bg cursor-col-resize flex items-center justify-center shrink-0 hover:bg-primary transition-colors" onMouseDown={handleMouseDown}>
+          <div className="w-0.5 h-8 bg-border rounded-sm group-hover:bg-white" />
         </div>
-        <div className="preview-panel" style={{ width: `${100 - splitPercent}%` }}>
+        <div className="overflow-auto bg-bg" style={{ width: `${100 - splitPercent}%` }}>
           <PreviewPanel
             basicInfo={resume.data.basicInfo || {}}
             markdown={resume.data.markdown || ''}

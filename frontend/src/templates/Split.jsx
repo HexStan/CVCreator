@@ -1,7 +1,6 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
 import { clampWidth } from '../utils/presetFields.js';
-import './Split.css';
 
 export default function SplitTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -14,40 +13,32 @@ export default function SplitTemplate({ basicInfo, markdown, innerWidth, hideBas
   return (
     <div style={{ fontFamily: fontFamily || '"Segoe UI", "Roboto", sans-serif', maxWidth: innerWidth ? `${innerWidth}px` : undefined }}>
       {!hideBasicInfo && (
-        <div style={{ display: 'flex', marginBottom: 10 }} data-section="header">
-          <div style={{
-            width: sidebarW, background: '#1e293b', color: '#e2e8f0',
-            padding: '24px 14px', flexShrink: 0,
-            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-          }}>
+        <div className="flex mb-2.5" data-section="header">
+          <div
+            className="bg-[#1e293b] text-[#e2e8f0] py-6 px-3.5 shrink-0 flex flex-col justify-center items-center"
+            style={{ width: sidebarW }}
+          >
             {avatar && (
-              <div style={{ width: 64, height: 64, borderRadius: '50%', overflow: 'hidden', marginBottom: 12, border: '2px solid #38bdf8', flexShrink: 0 }}>
-                <img src={avatar} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div className="w-16 h-16 rounded-full overflow-hidden mb-3 border-2 border-[#38bdf8] shrink-0">
+                <img src={avatar} alt="头像" className="w-full h-full object-cover" />
               </div>
             )}
             {nameField && (
-              <div style={{ fontSize: 16, fontWeight: 600, color: '#f1f5f9', textAlign: 'center', lineHeight: 1.2 }}>
+              <div className="text-base font-semibold text-[#f1f5f9] text-center leading-tight">
                 {nameField.value}
               </div>
             )}
           </div>
-          <div style={{
-            flex: 1, background: '#f8fafc', minWidth: 0,
-            padding: '16px 16px',
-            display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          }}>
-            <div style={{
-              display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)',
-              gap: '4px 14px', alignItems: 'end',
-            }}>
+          <div className="flex-1 bg-[#f8fafc] min-w-0 py-4 px-4 flex flex-col justify-center">
+            <div className="grid grid-cols-12 gap-x-3.5 gap-y-1 items-end">
               {otherFields.map((field) => {
                 const w = clampWidth(field.width);
                 return (
-                  <div key={field.key} style={{ gridColumn: `span ${w}`, minWidth: 0 }}>
-                    <span style={{ fontSize: 10, color: '#94a3b8', display: 'block', marginBottom: 1 }}>
+                  <div key={field.key} className="min-w-0" style={{ gridColumn: `span ${w}` }}>
+                    <span className="text-[10px] text-[#94a3b8] block mb-px">
                       {field.label}
                     </span>
-                    <span style={{ fontSize: 12, color: '#334155' }}>{field.value}</span>
+                    <span className="text-xs text-[#334155]">{field.value}</span>
                   </div>
                 );
               })}
@@ -56,9 +47,7 @@ export default function SplitTemplate({ basicInfo, markdown, innerWidth, hideBas
         </div>
       )}
       {markdown && (
-        <div className="split-body" style={{ padding: '0 4px' }}>
-          <MarkdownRenderer content={markdown} />
-        </div>
+        <MarkdownRenderer content={markdown} proseClass="prose prose-split" />
       )}
     </div>
   );

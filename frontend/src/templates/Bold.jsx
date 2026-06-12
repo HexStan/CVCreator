@@ -1,6 +1,5 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
-import './Bold.css';
 
 export default function BoldTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -16,44 +15,38 @@ export default function BoldTemplate({ basicInfo, markdown, innerWidth, hideBasi
   return (
     <div style={{ fontFamily: fontFamily || '"Montserrat", "Segoe UI", sans-serif', maxWidth: innerWidth ? `${innerWidth}px` : undefined }}>
       {!hideBasicInfo && (
-        <div style={{ marginBottom: 8 }} data-section="header">
-          <div style={{
-            background: '#0f172a', color: '#fff', padding: '18px 16px 14px',
-            display: 'flex', alignItems: 'center', gap: 16,
-          }}>
+        <div className="mb-2" data-section="header">
+          <div className="bg-[#0f172a] text-white py-[18px] px-4 flex items-center gap-4">
             {avatar && (
-              <div style={{ width: 56, height: 56, borderRadius: 4, overflow: 'hidden', flexShrink: 0, border: '2px solid #f59e0b' }}>
-                <img src={avatar} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div className="w-14 h-14 rounded overflow-hidden shrink-0 border-2 border-[#f59e0b]">
+                <img src={avatar} alt="头像" className="w-full h-full object-cover" />
               </div>
             )}
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="flex-1 min-w-0">
               {nameField && (
-                <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: -0.5, lineHeight: 1.2, textTransform: 'uppercase' }}>
+                <div className="text-2xl font-extrabold tracking-[-0.5px] leading-tight uppercase">
                   {nameField.value}
                 </div>
               )}
               {jobField && (
-                <div style={{ fontSize: 13, color: '#f59e0b', fontWeight: 500, marginTop: 3 }}>
+                <div className="text-[13px] text-[#f59e0b] font-medium mt-[3px]">
                   {jobField.value}
                 </div>
               )}
             </div>
           </div>
           {otherFields.length > 0 && (
-            <div style={{
-              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 20px',
-              padding: '10px 16px', background: '#f1f5f9', fontSize: 11,
-            }}>
+            <div className="grid grid-cols-2 gap-x-5 gap-y-0.5 p-2.5 px-4 bg-[#f1f5f9] text-[11px]">
               {leftCols.map((field) => (
-                <div key={field.key} style={{ display: 'flex', gap: 6, minWidth: 0 }}>
-                  <span style={{ color: '#64748b', flexShrink: 0, fontWeight: 500 }}>{field.label}</span>
-                  <span style={{ color: '#1e293b' }}>{field.value}</span>
+                <div key={field.key} className="flex gap-1.5 min-w-0">
+                  <span className="text-[#64748b] shrink-0 font-medium">{field.label}</span>
+                  <span className="text-[#1e293b]">{field.value}</span>
                 </div>
               ))}
-              {rightCols.map((field, idx) => (
-                <div key={field.key} style={{ display: 'flex', gap: 6, minWidth: 0 }}>
-                  <span style={{ color: '#64748b', flexShrink: 0, fontWeight: 500 }}>{field.label}</span>
-                  <span style={{ color: '#1e293b' }}>{field.value}</span>
+              {rightCols.map((field) => (
+                <div key={field.key} className="flex gap-1.5 min-w-0">
+                  <span className="text-[#64748b] shrink-0 font-medium">{field.label}</span>
+                  <span className="text-[#1e293b]">{field.value}</span>
                 </div>
               ))}
             </div>
@@ -61,9 +54,7 @@ export default function BoldTemplate({ basicInfo, markdown, innerWidth, hideBasi
         </div>
       )}
       {markdown && (
-        <div className="bold-body" style={{ padding: '0 4px' }}>
-          <MarkdownRenderer content={markdown} />
-        </div>
+        <MarkdownRenderer content={markdown} proseClass="prose prose-bold" />
       )}
     </div>
   );

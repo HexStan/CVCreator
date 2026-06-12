@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { getGearIndex, findGear, clampWidth } from '../../utils/presetFields.js';
-import './FieldItem.css';
 
 export default function FieldItem({
   field, index, widthGeaars,
@@ -26,12 +25,12 @@ export default function FieldItem({
 
   return (
     <div
-      className={`field-item${isDragging ? ' dragging' : ''}`}
+      className={`flex items-center gap-1.5 py-1.5 px-2 bg-lightest-gray border border-border rounded-md hover:bg-highlight-blue hover:border-primary-hover transition-[background,opacity,box-shadow]${isDragging ? ' opacity-40 shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''}`}
       onDragOver={onDragOver}
       onDrop={onDrop}
     >
       <span
-        className="field-drag-handle"
+        className="shrink-0 text-sm text-text-secondary cursor-grab px-0.5 select-none active:cursor-grabbing"
         draggable
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
@@ -39,10 +38,10 @@ export default function FieldItem({
       >
         &#9776;
       </span>
-      <div className="field-inputs">
+      <div className="flex-1 flex gap-1 min-w-0">
         <input
           ref={labelRef}
-          className="field-label-input"
+          className="w-[60px] shrink-0 py-0.5 px-1.5 border border-border rounded-[3px] text-xs outline-none bg-white focus:border-primary"
           value={field.label}
           onChange={(e) => onLabelChange(e.target.value)}
           onKeyDown={handleLabelKeyDown}
@@ -50,13 +49,13 @@ export default function FieldItem({
           title="字段名称（可编辑）"
         />
         <input
-          className="field-value-input"
+          className="flex-1 min-w-0 py-0.5 px-1.5 border border-border rounded-[3px] text-xs outline-none bg-white focus:border-primary"
           value={field.value}
           onChange={(e) => onValueChange(e.target.value)}
           placeholder="值"
         />
       </div>
-      <div className="field-width-control">
+      <div className="flex items-center gap-1 shrink-0">
         <input
           type="range"
           min={0}
@@ -64,12 +63,12 @@ export default function FieldItem({
           step={1}
           value={gearIdx}
           onChange={handleSliderChange}
-          className="width-slider"
+          className="range-slider"
           title={`宽度: ${gear.label}`}
         />
-        <span className="width-label">{gear.label}</span>
+        <span className="text-[10px] text-text-secondary min-w-[26px] text-center font-semibold">{gear.label}</span>
       </div>
-      <button className="btn-danger btn-sm field-remove-btn" onClick={onRemove} title="删除字段">&#10005;</button>
+      <button className="btn-danger btn-sm shrink-0 py-0.5 px-1.5 text-[11px]" onClick={onRemove} title="删除字段">&#10005;</button>
     </div>
   );
 }

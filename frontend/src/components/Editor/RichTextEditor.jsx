@@ -1,14 +1,13 @@
 import React from 'react';
-import './RichTextEditor.css';
 
 export default function RichTextEditor({ value, onChange }) {
   return (
-    <div className="richtext-editor">
-      <div className="richtext-hint">
+    <div className="flex flex-col h-full">
+      <div className="text-[11px] text-text-secondary mb-1.5 py-1 px-2 bg-highlight-blue rounded-[3px]">
         支持 Markdown 语法。使用 &lt;!-- pagebreak --&gt; 控制分页。
       </div>
       <textarea
-        className="richtext-textarea"
+        className="flex-1 w-full resize-none border border-border rounded-md p-2.5 text-[13px] leading-relaxed font-mono outline-none focus:border-primary"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={`在此输入简历详细内容...

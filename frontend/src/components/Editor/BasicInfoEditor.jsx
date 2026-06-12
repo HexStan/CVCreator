@@ -2,7 +2,6 @@ import React, { useState, useCallback, useRef, useMemo } from 'react';
 import AvatarUploader from './AvatarUploader.jsx';
 import FieldItem from './FieldItem.jsx';
 import { WIDTH_GEARS, ALL_PRESET_KEYS, getPresetField, clampWidth } from '../../utils/presetFields.js';
-import './BasicInfoEditor.css';
 
 export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onChange }) {
   const [draggingIndex, setDraggingIndex] = useState(null);
@@ -122,10 +121,10 @@ export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onC
   }, [fields]);
 
   return (
-    <div className="basic-info-editor">
+    <div className="flex flex-col gap-2.5">
       <AvatarUploader value={avatar} onChange={handleAvatarChange} />
 
-      <div className="fields-list">
+      <div className="flex flex-col gap-1.5">
         {fields.map((field, index) => (
           <FieldItem
             key={field.key}
@@ -145,15 +144,15 @@ export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onC
         ))}
       </div>
 
-      <div className="layout-preview-bar">
-        <span className="layout-preview-label">排版预览</span>
-        <div className="layout-preview-grid">
+      <div className="py-1.5 px-2 bg-light-gray rounded-md border border-border">
+        <span className="text-[10px] text-text-secondary uppercase tracking-[0.5px] mb-1 block">排版预览</span>
+        <div className="flex flex-col gap-0.5">
           {layoutRows.map((row, ri) => (
-            <div key={ri} className="layout-preview-row">
+            <div key={ri} className="flex gap-0.5 h-3.5 group">
               {row.map((colW, ci) => (
                 <div
                   key={ci}
-                  className="layout-preview-cell"
+                  className="h-full bg-primary opacity-30 rounded-sm group-hover:opacity-55 transition-opacity"
                   style={{ width: `${(colW / 12) * 100}%` }}
                   title={`${colW}/12`}
                 />
@@ -161,17 +160,17 @@ export default function BasicInfoEditor({ fields, avatar, deletedPresetKeys, onC
             </div>
           ))}
           {layoutRows.length === 0 && (
-            <div className="layout-preview-empty">暂无字段</div>
+            <div className="text-[10px] text-text-secondary italic">暂无字段</div>
           )}
         </div>
       </div>
 
-      <div className="add-field-area">
-        <div className="add-field-row">
+      <div className="pt-1.5 border-t border-dashed border-border">
+        <div className="flex gap-2 items-center">
           <button className="btn-default btn-sm" onClick={() => addField(null)}>+ 添加字段</button>
           {hasDeletedPresets && (
             <select
-              className="preset-select"
+              className="text-xs py-0.5 px-2 border border-border rounded-md bg-surface text-text-secondary cursor-pointer"
               value=""
               onChange={(e) => { if (e.target.value) addField(e.target.value); e.target.value = ''; }}
             >

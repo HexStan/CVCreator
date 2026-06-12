@@ -8,7 +8,7 @@ function AppInner() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>加载中...</div>;
+    return <div className="flex items-center justify-center h-full">加载中...</div>;
   }
 
   if (!user) {

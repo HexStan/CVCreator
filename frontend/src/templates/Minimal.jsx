@@ -1,6 +1,5 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
-import './Minimal.css';
 
 export default function MinimalTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -12,28 +11,26 @@ export default function MinimalTemplate({ basicInfo, markdown, innerWidth, hideB
   return (
     <div style={{ fontFamily: fontFamily || '"Helvetica Neue", Arial, sans-serif', maxWidth: innerWidth ? `${innerWidth}px` : undefined }}>
       {!hideBasicInfo && (
-        <div style={{ textAlign: 'center', marginBottom: 14 }} data-section="header">
+        <div className="text-center mb-3.5" data-section="header">
           {avatar && (
-            <div style={{ width: 56, height: 56, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 8px', border: '1px solid #ddd' }}>
-              <img src={avatar} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div className="w-14 h-14 rounded-full overflow-hidden mx-auto mb-2 border border-[#ddd]">
+              <img src={avatar} alt="头像" className="w-full h-full object-cover" />
             </div>
           )}
-          {nameField && <div style={{ fontSize: 24, fontWeight: 300, letterSpacing: 2, marginBottom: 4 }}>{nameField.value}</div>}
-          {jobField && <div style={{ fontSize: 13, color: '#888', marginBottom: 6 }}>{jobField.value}</div>}
+          {nameField && <div className="text-2xl font-light tracking-[2px] mb-1">{nameField.value}</div>}
+          {jobField && <div className="text-[13px] text-[#888] mb-1.5">{jobField.value}</div>}
           {otherFields.length > 0 && (
-            <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '2px 14px', fontSize: 12, color: '#555' }}>
+            <div className="flex justify-center flex-wrap gap-x-3.5 gap-y-0.5 text-xs text-[#555]">
               {otherFields.map((field) => (
                 <span key={field.key}>{field.value}</span>
               ))}
             </div>
           )}
-          <div style={{ marginTop: 8, borderBottom: '1px solid #333', width: 40, marginLeft: 'auto', marginRight: 'auto' }} />
+          <div className="mt-2 border-b border-[#333] w-10 mx-auto" />
         </div>
       )}
       {markdown && (
-        <div className="minimal-body">
-          <MarkdownRenderer content={markdown} />
-        </div>
+        <MarkdownRenderer content={markdown} proseClass="prose prose-minimal" />
       )}
     </div>
   );

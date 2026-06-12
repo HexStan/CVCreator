@@ -20,8 +20,8 @@ function downloadBlob(blob, filename) {
 }
 
 async function capturePages(container) {
-  const inner = container.querySelector('.preview-stage-inner');
-  const stage = container.querySelector('.preview-stage');
+  const inner = container.querySelector('[data-section="preview-stage-inner"]');
+  const stage = container.querySelector('[data-section="preview-stage"]');
   if (!inner || !stage) return [];
 
   const origTransform = inner.style.transform;
@@ -34,7 +34,7 @@ async function capturePages(container) {
   inner.offsetHeight;
 
   try {
-    const pageEls = inner.querySelectorAll('.preview-page');
+    const pageEls = inner.querySelectorAll('[data-section="preview-page"]');
     const canvases = [];
     for (const el of pageEls) {
       canvases.push(await capturePageElement(el));

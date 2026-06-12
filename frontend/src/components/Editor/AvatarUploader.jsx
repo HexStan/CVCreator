@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import './AvatarUploader.css';
 
 export default function AvatarUploader({ value, onChange }) {
   const inputRef = useRef(null);
@@ -37,15 +36,15 @@ export default function AvatarUploader({ value, onChange }) {
   };
 
   return (
-    <div className="avatar-uploader">
-      <div className="avatar-preview" onClick={() => inputRef.current?.click()}>
+    <div className="flex items-center gap-3 mb-1">
+      <div className="w-16 h-16 border-2 border-dashed border-border rounded-full flex items-center justify-center overflow-hidden cursor-pointer shrink-0 hover:border-primary transition-colors" onClick={() => inputRef.current?.click()}>
         {value ? (
-          <img src={value} alt="头像" />
+          <img src={value} alt="头像" className="w-full h-full object-cover" />
         ) : (
-          <span className="avatar-placeholder">+<br />头像</span>
+          <span className="text-[11px] text-text-secondary text-center leading-tight">+<br />头像</span>
         )}
       </div>
-      <div className="avatar-actions">
+      <div className="flex gap-1.5">
         <button className="btn-default btn-sm" onClick={() => inputRef.current?.click()}>
           {value ? '更换' : '上传'}
         </button>
@@ -57,7 +56,7 @@ export default function AvatarUploader({ value, onChange }) {
         ref={inputRef}
         type="file"
         accept="image/*"
-        style={{ display: 'none' }}
+        className="hidden"
         onChange={handleFileChange}
       />
     </div>

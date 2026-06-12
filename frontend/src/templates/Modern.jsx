@@ -1,7 +1,6 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
 import { clampWidth } from '../utils/presetFields.js';
-import './Modern.css';
 
 export default function ModernTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
@@ -13,26 +12,26 @@ export default function ModernTemplate({ basicInfo, markdown, innerWidth, hideBa
   return (
     <div style={{ fontFamily: fontFamily || '"Segoe UI", sans-serif', maxWidth: innerWidth ? `${innerWidth}px` : undefined }}>
       {!hideBasicInfo && (
-        <div style={{ marginBottom: 12 }} data-section="header">
-          <div style={{ background: '#1a1a2e', color: '#eee', padding: 12, borderRadius: 4, display: 'flex', gap: 16 }}>
+        <div className="mb-3" data-section="header">
+          <div className="bg-[#1a1a2e] text-[#eee] p-3 rounded flex gap-4">
             {avatar && (
-              <div style={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid #e94560' }}>
-                <img src={avatar} alt="头像" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div className="w-[72px] h-[72px] rounded-full overflow-hidden shrink-0 border-2 border-[#e94560]">
+                <img src={avatar} alt="头像" className="w-full h-full object-cover" />
               </div>
             )}
-            <div style={{ flex: 1 }}>
-              {nameField && <div style={{ fontSize: 22, fontWeight: 700, color: '#e94560' }}>{nameField.value}</div>}
-              {jobField && <div style={{ fontSize: 13, color: '#ccc', marginTop: 2 }}>{jobField.value}</div>}
+            <div className="flex-1">
+              {nameField && <div className="text-[22px] font-bold text-[#e94560]">{nameField.value}</div>}
+              {jobField && <div className="text-[13px] text-[#ccc] mt-0.5">{jobField.value}</div>}
             </div>
           </div>
           {otherFields.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '3px 12px', padding: '6px 4px 0' }}>
+            <div className="grid grid-cols-12 gap-x-3 gap-y-[3px] pt-1.5 px-1">
               {otherFields.map((field) => {
                 const w = clampWidth(field.width);
                 return (
-                  <div key={field.key} style={{ gridColumn: `span ${w}`, minWidth: 0 }}>
-                    <span style={{ fontSize: 10, color: '#888', display: 'block' }}>{field.label}</span>
-                    <span style={{ fontSize: 12, color: '#333' }}>{field.value}</span>
+                  <div key={field.key} className="min-w-0" style={{ gridColumn: `span ${w}` }}>
+                    <span className="text-[10px] text-[#888] block">{field.label}</span>
+                    <span className="text-xs text-[#333]">{field.value}</span>
                   </div>
                 );
               })}
@@ -41,9 +40,7 @@ export default function ModernTemplate({ basicInfo, markdown, innerWidth, hideBa
         </div>
       )}
       {markdown && (
-        <div className="modern-body" style={{ padding: '0 4px' }}>
-          <MarkdownRenderer content={markdown} />
-        </div>
+        <MarkdownRenderer content={markdown} proseClass="prose prose-modern" />
       )}
     </div>
   );

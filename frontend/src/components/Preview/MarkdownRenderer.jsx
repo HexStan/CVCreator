@@ -7,7 +7,7 @@ marked.setOptions({
   gfm: true,
 });
 
-export default function MarkdownRenderer({ content }) {
+export default function MarkdownRenderer({ content, proseClass = 'prose' }) {
   const html = useMemo(() => {
     if (!content) return '';
     const raw = marked.parse(content);
@@ -16,7 +16,7 @@ export default function MarkdownRenderer({ content }) {
 
   return (
     <div
-      className="markdown-body"
+      className={`${proseClass} markdown-body`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

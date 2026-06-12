@@ -1,21 +1,20 @@
 import React from 'react';
 import MarkdownRenderer from '../components/Preview/MarkdownRenderer.jsx';
 import { clampWidth } from '../utils/presetFields.js';
-import './Classic.css';
 
 export default function ClassicTemplate({ basicInfo, markdown, innerWidth, hideBasicInfo, fontFamily }) {
   const { avatar, fields } = basicInfo || {};
 
   return (
-    <div className="template-classic" style={{ maxWidth: innerWidth ? `${innerWidth}px` : undefined, fontFamily: fontFamily || undefined }}>
+    <div style={{ maxWidth: innerWidth ? `${innerWidth}px` : undefined, fontFamily: fontFamily || undefined }}>
       {!hideBasicInfo && (
-        <div className="classic-header" data-section="header">
+        <div className="mb-3 pb-2.5 border-b-2 border-[#333] flex gap-3.5 items-start" data-section="header">
           {avatar && (
-            <div className="classic-avatar">
-              <img src={avatar} alt="头像" />
+            <div className="w-[72px] h-24 shrink-0 border border-[#ddd] overflow-hidden">
+              <img src={avatar} alt="头像" className="w-full h-full object-cover" />
             </div>
           )}
-          <div className="classic-fields">
+          <div className="grid grid-cols-12 gap-x-2 gap-y-0.5 flex-1">
             {fields?.map((field) => {
               if (!field.value && field.key !== 'name') return null;
               const isName = field.key === 'name';
@@ -23,11 +22,11 @@ export default function ClassicTemplate({ basicInfo, markdown, innerWidth, hideB
               return (
                 <div
                   key={field.key}
-                  className={`classic-field${isName ? ' classic-field-name' : ''}`}
+                  className="text-xs min-w-0"
                   style={{ gridColumn: `span ${w}` }}
                 >
-                  {!isName && <span className="classic-field-key">{field.label}</span>}
-                  <span className="classic-field-val">{field.value}</span>
+                  {!isName && <span className="text-[#888] mr-1 after:content-[':']">{field.label}</span>}
+                  <span className={`text-[#333]${isName ? ' text-2xl font-bold block mb-0.5' : ''}`}>{field.value}</span>
                 </div>
               );
             })}
@@ -35,9 +34,7 @@ export default function ClassicTemplate({ basicInfo, markdown, innerWidth, hideB
         </div>
       )}
       {markdown && (
-        <div className="classic-body">
-          <MarkdownRenderer content={markdown} />
-        </div>
+        <MarkdownRenderer content={markdown} proseClass="prose prose-classic" />
       )}
     </div>
   );
